@@ -79,6 +79,23 @@ On va avoir besoin donc d'un système qui va gérer les routes, nous on va utili
     });
     ````
 
+10. On vérifie si la route appelé correspond à une de ces deux routes :
+
+    ```
+    $match = $router-match();
+    $match['target']();
+    ```
+
+    - Cette deuxième ligne correspond à : "On va chercher la valeur contenue dans la clé $_GET['target'] (correspond à la fonction callback contenue dans la route) et on l'appelle, c'est pour ça que l'on a mis les ().
+
+11. Si on teste en lançant le serveur et en allant à la page */blog*, on voit bien le *h1* Mon Blog.
+
+    ```
+    php -S localhost:8000 -t public 
+    ```
+
+12. Si on tape *localhost:8000/blog/category*, on tombe bien sur la page.
+
 
 
 
