@@ -1,4 +1,6 @@
-<?php require VIEW_PATH . '/layouts/header.php'; ?>
+<?php 
+require VIEW_PATH . '/layouts/header.php'; 
+?>
 
 
 <h1>Ma catégorie</h1>
