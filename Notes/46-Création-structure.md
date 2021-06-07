@@ -96,6 +96,59 @@ On va avoir besoin donc d'un système qui va gérer les routes, nous on va utili
 
 12. Si on tape *localhost:8000/blog/category*, on tombe bien sur la page.
 
+## Structure HTM de base / lien Bootstrap
+
+1. Pour améliorer un peu le design des pages, on va importer le lien [Bootstrap](https://getbootstrap.com/docs/5.0/getting-started/introduction/).
+
+    - Dans **views** on va créer un nouveau dossier/fichier **layouts/header.php**. 
+    
+    Ce fichier va contenir le code html de base de notre site et c'est ici que l'on vient coller le lien à Bootstrap.
+
+    ```
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
+    ```
+
+2. On va créer une navbar dans notre page.
+
+    ```
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <a href="#" class="navbar-brand">Mon Site</a>
+    </nav>
+    ```
+
+3. On va créer une *div* qui sera le container de l'appication.
+
+    ```
+    <div class="container mt-4">
+    ```
+
+4. On crée le fichier **layouts/footer.php** qui va contenir la fermeture de la *div* container et la fermeture de la page HTML.
+
+    ```
+        </div>
+    </body>
+    </html>
+    ```
+
+5. Maintenant, on pourra appeler ces fichiers dans nos pages.
+
+    ```
+    <?php require VIEW_PATH . '/layouts/header.php'; ?>
+    <?php require VIEW_PATH . '/layouts/footer.php'; ?>
+    ```
+
+6. Si on actualise la page, on va voit que le rendu c'est plus joli.
+
+
+
+
+
+
+
+
+
+    
+
 
 
 
