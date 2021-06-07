@@ -5,11 +5,14 @@ require '../vendor/autoload.php';
 // Pour démarrer AltoRouter, on l'instancie
 $router = new AltoRouter();
 
+// Création d'une constante pour éviter la répétition
+define('VIEW_PATH', dirname(__DIR__) . '/views');
+
 // Une fois AltoRouter instancié, on pourra créer les routes
 $router->map('GET', '/blog', function() {
-    require dirname(__DIR__) . 'views/post/index.php';
+    require  VIEW_PATH . '/post/index.php';
 });
 
 $router->map('GET', '/blog/category', function() {
-    require dirname(__DIR__) . 'views/category/show.php';
+    require VIEW_PATH . '/category/show.php';
 });

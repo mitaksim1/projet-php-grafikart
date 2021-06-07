@@ -53,10 +53,32 @@ On va avoir besoin donc d'un système qui va gérer les routes, nous on va utili
 
     ```
     $router->map('GET', '/blog', function() {
-    require dirname(__DIR__) . 'views/post/index.php';
+        require dirname(__DIR__) . 'views/post/index.php';
     });
     ```
 
 8. On crée une autre route pour la route */blog/category*.
+
+    ```
+    $router->map('GET', '/blog/category', function() {
+        require dirname(__DIR__) . 'views/category/show.php';
+    });
+    ```
+
+9. On voit que le code se répète au niveau du *dirname* on peut le factoriser en créant une constante que l'on ira appeller à la palce.
+
+    ```
+    define('VIEW_PATH', dirname(__DIR__) . '/views');
+    ```
+
+    - On aura qu'appeler maintenant la constante VIEW_PATH :
+
+    ```
+    $router->map('GET', '/blog', function() {
+        require  VIEW_PATH . '/post/index.php';
+    });
+    ````
+
+
 
 
