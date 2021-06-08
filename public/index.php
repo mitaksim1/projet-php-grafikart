@@ -14,7 +14,7 @@ $whoops->pushHandler(new \Whoops\Handler\PrettyPageHandler);
 $whoops->register();
 
 $router = new Router(dirname(__DIR__) . '/views');
-$router->get('/blog', 'post/index', 'blog');
+$router->get('/', 'post/index', 'home');
 $router->get('/blog/category', 'category/show', 'category');
 $router->run();
 

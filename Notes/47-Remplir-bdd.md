@@ -143,6 +143,12 @@ On va créer un script qui va s'occuper de remplir automatiquement notre base de
 
     On relance la commande, on vérifie dans notre bdd et il y a bien l'user admin qui a été crée.
 
-11. 
+11. Pour simplifier les choses et se préparer pour le prochain chapitre on va définir la page */blog* comme étant la page d'accueil de notre site.
+
+    Dans **public/index.php** :
+
+    ```
+    $router->get('/', 'post/index', 'home');
+    ```
 
 
