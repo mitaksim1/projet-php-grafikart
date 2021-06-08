@@ -9,6 +9,10 @@ use App\Router;
 define('DEBUG_TIME', microtime(true));
 // sleep(2);
 
+$whoops = new \Whoops\Run;
+$whoops->pushHandler(new \Whoops\Handler\PrettyPageHandler);
+$whoops->register();
+
 $router = new Router(dirname(__DIR__) . '/views');
 $router->get('/blog', 'post/index', 'blog');
 $router->get('/blog/category', 'category/show', 'category');

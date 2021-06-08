@@ -227,7 +227,28 @@ On va ajouter des nouvelles classes au fur et à mesure de l'avancement du proje
 
     De cette façon, si on a pas besoin de débugger le code, on pourra commenter la définition de la constante et on n'aura pas des erreurs dans notre code.
 
-7. 
+7. en parlant de débugage, on va installer **var-dumper** de Symfony.
+
+    ```
+    composer require symfony/var-dumper
+    ```
+
+8. On va aussi installer [**whoops**](https://github.com/filp/whoops), une librairie qui affiche les erreurs d'une façon plus jolie.
+
+    ```
+    composer require filp/whoops:2.3.1
+    ```
+
+9. Pour que whoops marche, on doit écrire ces trois lignes dans le fichier racine du projet.
+
+    ```
+    $whoops = new \Whoops\Run;
+    $whoops->pushHandler(new \Whoops\Handler\PrettyPageHandler);
+    $whoops->register();
+    ```
+
+    Maintenant, chaque fois qu'une Exception sera capturé dans notre système elle sera traité et affiché avec whoops.
+
 
 
 

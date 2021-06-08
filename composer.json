@@ -5,6 +5,8 @@
         }
     },
     "require": {
-        "altorouter/altorouter": "1.2.0"
+        "altorouter/altorouter": "1.2.0",
+        "symfony/var-dumper": "^5.3",
+        "filp/whoops": "2.3.1"
     }
 }
