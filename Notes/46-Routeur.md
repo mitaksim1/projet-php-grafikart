@@ -160,6 +160,24 @@ Chaque chapitre sera suivi d'un autre qui va organiser un peu mieux le code, alo
 
 10. On re teste et on récupère bien nos deux pages.
 
+### Changer le titre pour chaque page
+
+1. Dans le fichier *post/index.php* on va initialiser la variable $title = 'Mon Blog';
+
+2. Ainsi on aura qu'à l'appeler dans le code HTML dans **default.php**.
+
+    ```
+    <title><?= $title ?></title>
+    ```
+
+3. Pour qu'il n'y ait pas d'erreur dans la page */blog/category*, on va créer une condition :
+
+    ```
+    <title><?= $title ?? 'Mon Site' ?></title>
+    ```
+
+
+
 
 
 
