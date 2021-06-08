@@ -176,7 +176,58 @@ Chaque chapitre sera suivi d'un autre qui va organiser un peu mieux le code, alo
     <title><?= $title ?? 'Mon Site' ?></title>
     ```
 
+### Performance de l'application
 
+On va ajouter des nouvelles classes au fur et à mesure de l'avancement du projet, ce serait intéressant alors, de voir combien de temps la page met à se charger.
+
+1. Dans **index.php** on va créer une constante :
+
+    ```
+    define('DEBUG_TIME', microtime(true));
+    ```
+
+    - **microtime** : nous donne le temps actuelle (datetime), mais avec les mille secondes.
+
+2. Dans **default.php** on va créer un footer :
+
+    ```
+    <footer class="bg-light py-4 footer">
+        <div class="container">
+            Page générée en <?= 1000 * (microtime(true) - DEBUG_TIME) ?>ms
+        </div>
+    </footer>
+    ```
+3. On teste et on voit bien sur notre page le temps qui a mis pour que la page se charge.
+
+    On a rajouté la méthode **sleep(2)** tout de suite après juste pour montrer qu'on peut le retarder de 2s si on veut.
+
+4. On a arrondi la valeur.
+
+    ```
+    Page générée en <?= round(1000 * (microtime(true) - DEBUG_TIME)) ?>ms
+    ```
+
+5. On ajoute un peu de style à la page pour mieux organiser les éléments.
+
+    ```
+    <html lang="fr" class="h-100">
+
+    <body class="d-flex flex-column h-100">
+
+    <footer class="bg-light py-4 footer mt-auto">
+    ```
+
+6. Comme cette constante serve juste pour lé débug en mode dev, on pourra créer cette condition pour qu'elle s'affiche :
+
+    ```
+     <?php if (defined('DEBUG_TIME')): ?>
+        Page générée en <?= round(1000 * (microtime(true) - DEBUG_TIME)) ?>ms
+    <?php endif ?>
+    ```
+
+    De cette façon, si on a pas besoin de débugger le code, on pourra commenter la définition de la constante et on n'aura pas des erreurs dans notre code.
+
+7. 
 
 
 
