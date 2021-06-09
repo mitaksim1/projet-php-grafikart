@@ -263,6 +263,94 @@ Pour éviter d'écrire un code trop verbeux comme dans cette ligne : *<p><?= nl2
     <p class="text-muted"><?= $post->getCreatedAt()->format('d F Y') ?></p>
     ```
 
+### Créer un lien qui mène vers la page de l'article
+
+1. Dans **index.php** on commence par créer la nouvelle route.
+
+    ```
+    $router->get('/blog/[*:slug]-[i:id]', 'post/show', 'post');
+    ```
+
+2. On passe le chemin vers la route au lien que l'on avait crée auparavnt.
+
+    ```
+    <a href="<?php url('post', ['id' => $post->getId(), 'slug' => $post->getSlug() ]) ?>" class="btn btn-primary">Voir plus</a>
+    ```
+
+    - On a aps encore codé la méthode *url()* ni les méthodes *getId()* et *getSlug()*.
+
+3. On va alors, les créer :
+
+    ```
+    public function getslug(): ?string
+    {
+        return $this->slug;
+    }
+
+    public function getID(): ?int
+    {
+        return $this->id;
+    }
+    ```
+
+4. Il nous reste à gérer la méthode url(). On avait vu que pour gérer les routes on a **AltoRouter**.
+
+    - Dans AltoRouter on a la méthode **generate()** qui nous permettra de gérer nos routes comme on a configurée, le soucis c'est que dans la méthode run() on a pas donné accès à cette méthode. alors si on veut l'utiliser dans nos fichier **Router.php**, il va falloir chnager le code de cette méthode en ajoutan la ligne suivante:
+
+    ```
+    $router = $this->router;
+    ```
+
+    - On peut maintenant accèder à la route comme suit:
+
+    ```
+    <a href="<?php $router->generate('post', ['id' => $post->getId(), 'slug' => $post->getslug() ]) ?>" class="btn btn-primary">Voir plus</a>
+    ```
+
+5. Quand j'ai testé, ça ne se passait rien. J'avais quelques erreurs au niveau du camelCase dans le nom de quelques méthodes, mais ce n'était pas ça.
+
+    J'ai essayé de mettre une autre route pour voir si c'était quelque chose au niveau de la route que j'avais mis, parce que ce n'était pas ailleurs et je ne voyais rien d'autre et ça marchait si je mettais */blog/category* par exemple, alors en re analysant bien le code j'ai vu que j'avais écris *<?php* au lieu de *?p=*.
+
+    Du coup, j'ai actualisé la page et je voyais bien dans l'url le bon chemin : 
+    
+    *http://localhost:8000/blog/ut-vitae-dolorum-exercitationem-culpa-dolor-eius-dolor-tempora-33*
+
+    Bien sûr on a une erreur parce qu'on a pas encore créer la page de vue */post/show*.
+
+6. Notre idée initiale c'était d'appeler une méthode **url()**.
+
+    Alors, on va créer cette méthode dans la classe Router.
+
+    ```
+    public function url(string $name, array $params = [])
+    {
+        return $this->router->generate($name, $params);
+    }
+    ```
+
+7. Maintenant qu'on a crée cette méthode dans le run() on ne vas plus envoyer le $routes, on va envoyer $this (l'objet courant).
+
+    ```
+    $router = $this;
+    ```
+
+8. On peut appeler la méthode comme on avait fait avant :
+
+    ```
+    <a href="<?= $router->url('post', ['id' => $post->getID(), 'slug' => $post->getSlug()]) ?>" class="btn btn-primary">Voir plus</a>
+    ```
+
+9. On actualise la page et ça continue à marcher.
+
+L'avantage de cette approche, c'est qu'on ne fait plus appel à AltoRouter en dehor du fichier Routes.php. 
+
+Si un jour, on décide de changer de router, on aura qu'à changer ce fichier.
+
+
+
+
+
+
 
 
 

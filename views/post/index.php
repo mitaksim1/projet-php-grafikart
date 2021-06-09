@@ -23,16 +23,7 @@ $posts = $query->fetchAll(PDO::FETCH_CLASS, Post::class);
 <div class="row">
     <?php foreach ($posts as $post) : ?>
         <div class="col-md-3">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title"><?= htmlentities($post->getName()) ?></h5>
-                    <p class="text-muted"><?= $post->getCreatedAt()->format('d F Y') ?></p>
-                    <p><?= $post->getExcerpt() ?></p>
-                    <p>
-                        <a href="" class="btn btn-primary">Voir plus</a>
-                    </p>
-                </div>
-            </div>
+            <?php require 'card.php' ?>
         </div>
     <?php endforeach ?>
 </div>

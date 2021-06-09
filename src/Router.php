@@ -33,6 +33,12 @@ class Router {
         // Méthode fluent permet de retourner la classe elle même et ainsi enchaîber les méthodes
         return $this;
     }
+
+    // Méthode qui va gérer les routes, elle prendra en paramètre le nom de la route et un array avec les paramètres pour cette route
+    public function url(string $name, array $params = [])
+    {
+        return $this->router->generate($name, $params);
+    }
     
     public function run(): self
     {
@@ -41,6 +47,8 @@ class Router {
         // Ca envoi un tableau associatif contenant les correspondances
         $view = $match['target'];
         // ob_start va sauvegarder le require
+        // Pour donner acccès à toutes les variables contenues dans AltoRouter
+        $router = $this;
         ob_start();
         require $this->viewPath . DIRECTORY_SEPARATOR . $view . '.php';
         // ob_get_clean va récupérer la ligne ou les lignes contenues entre ob_start et lui, dans ce cas il va sauvegarder dans $content le require ci-dessus
