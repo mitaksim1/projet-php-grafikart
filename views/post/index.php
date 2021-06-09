@@ -12,7 +12,7 @@ $pdo = new PDO('mysql:dbname=tutoblog;host=127.0.0.1', 'root', 'Root*', [
     PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
 ]);
 // Initialise la page courante en prennant la valeur de la clé 'page'
-$currentPage = (int)$_GET['page'] ?? 1;
+$currentPage = (int)($_GET['page'] ?? 1);
 
 // Envoi une erreur si la page envoyé n'est pas valide
 if ($currentPage <= 0) {
@@ -51,4 +51,17 @@ $posts = $query->fetchAll(PDO::FETCH_CLASS, Post::class);
             <?php require 'card.php' ?>
         </div>
     <?php endforeach ?>
+</div>
+
+<div class="d-flex justify-content-between my-4">
+    <?php if ($currentPage > 1): ?>
+        <?php
+        $link = $router->url('home');
+        if ($currentPage > 2) $link .= '?page=' . ($currentPage - 1);
+        ?>
+        <a href="<?= $link ?>" class="btn btn-primary">&laquo; Page précédente</a>
+    <?php endif ?>
+    <?php if ($currentPage < $pages): ?>
+        <a href="<?= $router->url('home') ?>?page=<?= $currentPage + 1 ?>" class="btn btn-primary ml-auto"> Page suivante &raquo;</a>
+    <?php endif ?>
 </div>

@@ -107,5 +107,43 @@ Pour faire ça, il va falloir calculer le nombre d'articles que l'on a pour savo
 
 14. On teste, et on voit sur la page 2 que l'on reçoit les articles de 2007, sur la page 5 on n'a que deux articles, ça marche :-)
 
+### Afficher la pagination en bas 
+
+1. On crée le code html suivant :
+
+    ```
+    <div class="d-flex justify-content-between my-4">
+        <?php if ($currentPage > 1): ?>
+            <a href="<?= $router->url('home') ?>?page=<?= $currentPage - 1 ?>" class="btn btn-primary">&laquo; Page précédente</a>
+        <?php endif ?>
+        <?php if ($currentPage < $pages): ?>
+            <a href="<?= $router->url('home') ?>?page=<?= $currentPage + 1 ?>" class="btn btn-primary"> Page suivante &raquo;</a>
+        <?php endif ?>
+    </div>
+    ```
+
+    - **&laquo &raquo** : on échappe les signes < > pour pas qu'il pense que c'est une ouverture html.
+
+2. On teste et ça marche!
+
+3. Pour corriger le lien de la page 1 et le mettre à droite le mec a ajouté *ml-auto* à la classe du lien , mais pour mois ça ne pas marché.
+
+    C'est juste du design, alors c'est pas grave je laisse comme ça.
+
+4. Un autre détail, quand on est à la page 1 on a pas besoin de le préciser, parce que c'est la page principale. On va faire en sorte que la page ne soit précisé qu'à partir de la page 2.
+
+    ```
+    <?php
+    $link = $router->url('home');
+    if ($currentPage > 2) $link .= '?page=' . ($currentPage - 1);
+    ?>
+    ```
+
+5. On teste et ça ne marchait pas parce que j'avais oublié d'entourer cette partie du code, aff...
+
+    ```
+    $currentPage = (int)($_GET['page'] ?? 1);
+    ```
+
 
 
