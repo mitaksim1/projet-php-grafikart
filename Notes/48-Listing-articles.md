@@ -74,6 +74,35 @@ Notre objectif pour ce chapitre est de lister les articles dans notre page d'acc
 
 7. On teste et les articles s'affichent bien sur chaque carte.
 
+8. Pour éviter que l'utilisateur n'insère du html dans le titre on va échapper les données.
+
+    ```
+    <h5 class="card-title"><?= htmlentities($post->name) ?></h5>
+    ```
+
+9. On récupère aussi le contenu de l'article.
+
+    ```
+    <p><?= htmlentities($post->content) ?></p>
+    ```
+
+10. Pour respecter les sauts de lligne on rajoute un **nl2br** au contenu.
+
+    Attention à l'ordre, il faut d'abord échapper la varibale pour après appeler le nl2br.
+
+    ```
+    <p><?= nl2br(htmlentities($post->content)) ?></p>
+    ```
+
+11. On va ajouter un autre paragraphe où on va mettre notre bouton en forme de lien;
+
+    ```
+    <p>
+        <a href="" class="btn btn-primary">Voir plus</a>
+    </p>
+    ```
+
+
 
 
 
