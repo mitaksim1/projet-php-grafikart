@@ -102,6 +102,41 @@ Notre objectif pour ce chapitre est de lister les articles dans notre page d'acc
     </p>
     ```
 
+12. On ne veut pas afficher tout l'article, mais juste un extrait.
+
+    Une bonne solution c'est de créer une classe qui va s'occuper de ça :
+
+    - Dans **src** on créee un nouveau dossier **helpers/Text.php**.
+
+    - Dans la classe Text :
+
+    ```
+    <?php
+    namespace App\Helpers;
+
+    class Text {
+
+        public static function excerpt(string $content, int $limit = 60)
+        {
+            if (mb_strlen($content) < $limit) {
+                // si inférieur on retourne le contenu
+                return $content;
+            }
+            // Si supérieur on appelle la méthode substr, on passe le contenu à couper et on donne les mésures que l'on souhaite
+            // Les trois points c'est juste pour signaler à l'utilisateur qu'il y a une suite
+            return substr($content, 0, $limit) . '...';
+        }
+    }
+    ```
+
+13. On a qu'à appeler la méthode excerpt dans notre code html :
+
+    ```
+    <p><?= nl2br(htmlentities(Text::excerpt($post->content))) ?></p>
+    ```
+
+14. On teste!
+
 
 
 
