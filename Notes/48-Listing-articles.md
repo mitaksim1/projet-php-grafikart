@@ -102,7 +102,9 @@ Notre objectif pour ce chapitre est de lister les articles dans notre page d'acc
     </p>
     ```
 
-12. On ne veut pas afficher tout l'article, mais juste un extrait.
+### Afficher un extrait de l'article
+
+1. On ne veut pas afficher tout l'article, mais juste un extrait.
 
     Une bonne solution c'est de créer une classe qui va s'occuper de ça :
 
@@ -129,13 +131,34 @@ Notre objectif pour ce chapitre est de lister les articles dans notre page d'acc
     }
     ```
 
-13. On a qu'à appeler la méthode excerpt dans notre code html :
+2. On a qu'à appeler la méthode excerpt dans notre code html :
 
     ```
     <p><?= nl2br(htmlentities(Text::excerpt($post->content))) ?></p>
     ```
 
-14. On teste!
+3. On teste!
+
+4. Quand on vérifie on voit qu'ils on coupé une partie du mot, pour éviter ça on peut utilise la fonction **mb_strpos()**.
+
+    Cette fonction va prendre comme paramètre la string où on veut chercher ce que sera mis en deuxième paramètre et le troisième ce sera à partir d'où faire la recherche.
+
+    ```
+    $lastSpace = mb_strpos($content, ' ', $limit);
+    ```
+
+5. Maintenant, dans la fonction *substr* que l'on avait crée, au lieu de couper à $limit, on va couper à $lastSpace.
+
+    ```
+    return mb_substr($content, 0, $lastSpace) . '...';
+    ```
+
+    - Comme on veut gérer les strings unicodes, on le précise pour la fonction *substr* aussi.
+
+6. On teste et c'est beaucoup mieux avec les mots entiers.
+
+
+
 
 
 
