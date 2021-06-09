@@ -254,10 +254,14 @@ Pour éviter d'écrire un code trop verbeux comme dans cette ligne : *<p><?= nl2
 3. On appele la méthode créée dans le code html.
 
     ```
-    <p class="text-muted"></p>
+    <p class="text-muted"><?= $post->getCreatedAt()->format('d/m/Y') ?></p>
     ```
 
-4. 
+4. On change l'affichage de la date avec le mois écrit en lettres.
+
+    ```
+    <p class="text-muted"><?= $post->getCreatedAt()->format('d F Y') ?></p>
+    ```
 
 
 
