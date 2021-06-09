@@ -346,6 +346,44 @@ L'avantage de cette approche, c'est qu'on ne fait plus appel à AltoRouter en de
 
 Si un jour, on décide de changer de router, on aura qu'à changer ce fichier.
 
+10. Une dernière chose que l'on peut faire c'est de factoriser le code des cartes pour les articles dans un fichier à part, ainsi si un jour on a besoin on pourra les ré utiliser ailleurs.
+
+    - On crée dans le même dossier **views/post** le fichier *card.php*.
+
+    - On passe tout le code concernant les cartes dans ce fichier.
+
+    ```
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title"><?= htmlentities($post->getName()) ?></h5>
+            <p class="text-muted"><?= $post->getCreatedAt()->format('d F Y') ?></p>
+            <p><?= $post->getExcerpt() ?></p>
+            <p>
+                <a href="<?= $router->url('post', ['id' => $post->getID(), 'slug' => $post->getSlug()]) ?>" class="btn btn-primary">Voir plus</a>
+            </p>
+        </div>
+    </div>
+    ```
+
+    - On n'a qu'à appeler ce fichier dans **views/post/index.php**.
+
+    ```
+    <div class="row">
+        <?php foreach ($posts as $post) : ?>
+            <div class="col-md-3">
+                <?php require 'card.php' ?>
+            </div>
+        <?php endforeach ?>
+    </div>
+    ```
+
+11. Pour finir on ajoute juste une marge en bas sous les cartes.
+
+    ```
+    <div class="card mb-3">
+    ```
+
+
 
 
 
