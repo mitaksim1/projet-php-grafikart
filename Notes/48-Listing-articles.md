@@ -232,6 +232,33 @@ Pour éviter d'écrire un code trop verbeux comme dans cette ligne : *<p><?= nl2
 
 8. On actualise la page et ça marche normalement.
 
+### Récupération de la date
+
+1. Si on veut ajouter la date à notre article, on pourrait faire quelque chose comme ça :
+
+    ```
+    <p class="text-muted"><?= $post->created_at ?></p>
+    ```
+
+    - Le problème c'est qu'on allait recevoir une date en forme de chaîne de caractère, il va falloir la convertir en DateTime.
+
+2. On va donc, créer une focntion qui fera ça pour nous, on n'aura qu'à l'appeler après.
+
+    ```
+    public function getCreatedAt(): DateTime
+    {
+        return new DateTime($this->created_at);
+    }
+    ```
+
+3. On appele la méthode créée dans le code html.
+
+    ```
+    <p class="text-muted"></p>
+    ```
+
+4. 
+
 
 
 

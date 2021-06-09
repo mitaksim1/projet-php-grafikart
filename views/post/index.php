@@ -17,22 +17,22 @@ $posts = $query->fetchAll(PDO::FETCH_CLASS, Post::class);
 
 <h1>Mon Blog</h1>
 
-<?php //dump($posts);exit; ?>
+<?php //dump($posts);exit; 
+?>
 
 <div class="row">
-    <?php foreach ($posts as $post): ?>
-    <div class="col-md-3">
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title"><?= htmlentities($post->getName()) ?></h5>
-                <p><?= $post->getExcerpt() ?></p>
-                <p>
-                    <a href="" class="btn btn-primary">Voir plus</a>
-                </p>
+    <?php foreach ($posts as $post) : ?>
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title"><?= htmlentities($post->getName()) ?></h5>
+                    <p class="text-muted"><?= $post->getCreatedAt()->format('d/m/Y') ?></p>
+                    <p><?= $post->getExcerpt() ?></p>
+                    <p>
+                        <a href="" class="btn btn-primary">Voir plus</a>
+                    </p>
+                </div>
             </div>
         </div>
-    </div>
     <?php endforeach ?>
 </div>
-
-
