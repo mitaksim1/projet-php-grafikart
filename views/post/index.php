@@ -6,19 +6,13 @@
 use App\Connection;
 use App\Helpers\Text;
 use App\Model\Post;
+use App\URL;
 
 $title = 'Mon Blog';
 
 $pdo = Connection::getPDO();
 
-$page = $_GET['page'] ?? 1;
-
-// Si la valeur saisi dans $page n'est pas un entier
-if (!filter_var($page, FILTER_VALIDATE_INT)) {
-    throw new Exception('Numéro de page invalide');
-}
-
-$currentPage = (int)$page;
+$currentPage = URL::getInt('page', 1);
 
 // Calcule le nombre d'articles total dans la bdd
 $count = (int)$pdo->query('SELECT COUNT(id) FROM post')->fetch(PDO::FETCH_NUM)[0];

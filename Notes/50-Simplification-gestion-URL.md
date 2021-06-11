@@ -106,6 +106,39 @@ On va plutôt, créer une classe qui va s'occuper juste d'appeler PDO.
 
 8. On teste en tapant les deux paramètres et ils nous retournent juste param=2. Ce code permet d'alléger index.php.
 
+### On s'assure de recevoir toujours un entier dans le paramètre page
+
+On va factoriser le code qui vérifie la récéption d'un entier dans l'url au moment de choisir la page en mettant le code que l'on avait crée dans **post/index;php** dans une classe que l'on a nommée **URL.php**.
+
+1. On crée la classe URL.
+
+    ```
+    <?php
+    namespace App;
+
+    class URL {
+
+        public static function getInt(string $name, ?int $default = null): ?int
+        {
+            if (!isset($_GET[$name])) return $default;
+
+            // Si la valeur saisi dans $page n'est pas un entier
+            if (!filter_var($_GET[$name], FILTER_VALIDATE_INT)) {
+                throw new \Exception("Le paramètre $name dans l'url n'est pas un entier");
+            }
+            return (int)$_GET[$name];
+        }
+    }
+    ```
+
+2. On aura maintenant qu'à appeler cette méthode dans **post/index.php** en passant les arguments souhaités.
+
+    ```
+    $currentPage = URL::getInt('page', 1);
+    ```
+
+3. On teste!
+
 
 
 

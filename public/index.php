@@ -16,8 +16,7 @@ $whoops->register();
 // Gére la redirection de la page si ?page=1
 if (isset($_GET['page']) && $_GET['page'] === '1') {
     // réécrire l'url sans le paramètre ?page
-    $uri = $_SERVER['REQUEST_URI'];
-    $uri = explode('?', $uri)[0];
+    $uri = explode('?', $_SERVER['REQUEST_URI'])[0];
     $get = $_GET;
     // unset détruit la valeur passée en paramètre
     unset($get['page']);
@@ -28,13 +27,6 @@ if (isset($_GET['page']) && $_GET['page'] === '1') {
     http_response_code(301);
     header('Location: ' . $uri);
     exit();
-}
-
-// Si page /?page=1 redirection vers la page home
-if ($page === '1') {
-    header('Location: ' .$router->url('home'));
-    http_response_code((301));
-    exit;
 }
 
 $router = new Router(dirname(__DIR__) . '/views');
