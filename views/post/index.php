@@ -3,14 +3,13 @@
 <?php
 // Pour afficher le titre de la page
 
+use App\Connection;
 use App\Helpers\Text;
 use App\Model\Post;
 
 $title = 'Mon Blog';
 
-$pdo = new PDO('mysql:dbname=tutoblog;host=127.0.0.1', 'root', 'Root*', [
-    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
-]);
+$pdo = Connection::getPDO();
 
 $page = $_GET['page'] ?? 1;
 

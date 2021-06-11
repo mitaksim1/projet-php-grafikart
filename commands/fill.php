@@ -1,11 +1,12 @@
 <?php
+
+use App\Connection;
+
 require dirname(__DIR__) . '/vendor/autoload.php';
 
 $faker = Faker\Factory::create('fr_FR');
 
-$pdo = new PDO('mysql:dbname=tutoblog;host=127.0.0.1', 'root', 'Root*', [
-    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
-]);
+$pdo = Connection::getPDO();
 
 // Pour que ça marche, il faut pas qu'il tienne compte des clé étrangères
 $pdo->exec('SET FOREIGN_KEY_CHECKS = 0');
