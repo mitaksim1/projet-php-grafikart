@@ -11,13 +11,22 @@ $title = 'Mon Blog';
 $pdo = new PDO('mysql:dbname=tutoblog;host=127.0.0.1', 'root', 'Root*', [
     PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
 ]);
-// Initialise la page courante en prennant la valeur de la clé 'page'
-$currentPage = (int)($_GET['page'] ?? 1);
 
-// Envoi une erreur si la page envoyé n'est pas valide
-if ($currentPage <= 0) {
+$page = $_GET['page'] ?? 1;
+
+// Si la valeur saisi dans $page n'est pas un entier
+if (!filter_var($page, FILTER_VALIDATE_INT)) {
     throw new Exception('Numéro de page invalide');
 }
+
+// Si page /?page=1 redirection vers la page home
+if ($page === '1') {
+    header('Location: ' .$router->url('home'));
+    http_response_code((301));
+    exit;
+}
+
+$currentPage = (int)$page;
 
 // Calcule le nombre d'articles total dans la bdd
 $count = (int)$pdo->query('SELECT COUNT(id) FROM post')->fetch(PDO::FETCH_NUM)[0];

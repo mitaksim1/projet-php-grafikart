@@ -145,5 +145,37 @@ Pour faire ça, il va falloir calculer le nombre d'articles que l'on a pour savo
     $currentPage = (int)($_GET['page'] ?? 1);
     ```
 
+6. Si l'utilisateur s'amuse à mettre d'autres choses après l'url de la page, ça peut impacter au niveau du référencement, alors pour éviter cela :
+
+    ```
+    $page = $_GET['page'] ?? 1;
+
+    $currentPage = (int)$page;
+    ```
+
+    ```
+    if (!filter_var($page, FILTER_VALIDATE_INT)) {
+        throw new Exception('Numéro de page invalide');
+    }
+    ```
+
+7. Maintenant, si on réactualise la page on a le message comme quoi le numéro est invalide;
+
+8. On ne veut plus qu'on puisse écrire */?page=1* si c'est le cas on veut que la page soit redirigé vers */* :
+
+    ```
+    if ($page === '1') {
+        header('Location: ' .$router->url('home'));
+        http_response_code((301));
+        exit;
+    }
+    ```
+
+    Pour tester, aller sur la console et vérifier les données reçues dans l'onglet réseau.
+
+    
+
+
+
 
 
