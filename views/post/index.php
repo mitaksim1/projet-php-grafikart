@@ -12,7 +12,7 @@ $title = 'Mon Blog';
 
 $pdo = Connection::getPDO();
 
-$currentPage = URL::getInt('page', 1);
+$currentPage = URL::getPositiveInt('page', 1);
 
 // Calcule le nombre d'articles total dans la bdd
 $count = (int)$pdo->query('SELECT COUNT(id) FROM post')->fetch(PDO::FETCH_NUM)[0];

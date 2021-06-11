@@ -139,6 +139,66 @@ On va factoriser le code qui vérifie la récéption d'un entier dans l'url au m
 
 3. On teste!
 
+### Challenge
+
+Essayer de créer une méthode qui va gérer l'execption au cas où le numéro de page saisi soit inférieur à 0.
+
+Moi, j'avais effacé cette partie du code tout au début de ce chapitre sans faire exprès, alors je le recopie.
+
+```
+if ($currentPage <= 0) {
+    throw new Exception('Numéro de page invalide');
+}
+```
+
+1. Le mec nous a donné la signature pour la méthode :
+
+    ```
+    public static function getPositiveInt(string $name, ?int $default = null): ?int
+    {
+    
+    }
+    ```
+
+2. J'ai copié le codé que l'on avait codé auparavant et je l'ai collé dans cette méthode :
+
+    ```
+    public static function getPositiveInt(string $name, ?int $default = null): ?int
+    {
+        if ($name <= 0) {
+            throw new Exception('Numéro de page invalide');
+        }
+    }
+    ```
+
+3. Après j'ai appeleé la méthode dans  **post/index.php** en passant les arguments comme suit :
+
+    ```
+    URL::getPositiveInt('page', $currentPage);
+    ```
+
+4. J'ai testé et à mon avis ça a marché, à voir avec la correction si le mec a fait d'une autre façon.
+
+### Correction
+
+Bien sur que le mec a fait d'une autre façon :
+
+1. Code de getPositiveInt() :
+
+    ```
+    public static function getPositiveInt(string $name, ?int $default = null): ?int
+    {
+        $param = self::getInt($name, $default);
+        if ($param !== null && $param <= 0) {
+            throw new Exception("Le paramètre '$name' dans l'url n'est pas un entier positif");
+        }
+        return $param;
+    }
+    ```
+2. On n'a qu'à appeler cette méthode à la place de getInt dans **post/index.php**.
+
+
+
 
 
 
