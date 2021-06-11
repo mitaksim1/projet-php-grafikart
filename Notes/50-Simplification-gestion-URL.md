@@ -29,6 +29,93 @@ On va plutôt, créer une classe qui va s'occuper juste d'appeler PDO.
 
     Quand on ira déployer notre site et on aura besoin de changer les données de connexion à la base de données, on pourra le faire directement dans la classe Connection et ça va changer pour tous les fichiers que font appel à cette méthode.
 
+3. Il faut qu'on écrive un code plus généralisé, au cas où on crée d'autres urls qui auront aussi besoin du paramètre *?page*.
+
+    Par exemple si un jour, on a ce chemin : *localhost:8000/blog/tutoriels?page=1&param2=2*, il va falloir que l'on puisse enlèver le ?page=1
+
+    ```
+    if (isset($_GET['page']) && $_GET['page'] === '1') {
+        dd($_SERVER);
+    }
+    ```
+
+4. On voit que l'url saisi par l'utilisateur est stocké dans la clé REQUEST_URI, on va récupèrer sa valeur.
+
+    ```
+    if (isset($_GET['page']) && $_GET['page'] === '1') {
+        $uri = $_SERVER['REQUEST_URI'];
+    }
+    ```
+5. On va séparer la partie url de la partie paramètres :
+
+    ```
+    if (isset($_GET['page']) && $_GET['page'] === '1') {
+        $uri = $_SERVER['REQUEST_URI'];
+        $uri = explode('?', $uri)[0];
+        dd($uri);
+    }
+    ```
+
+    - On veut séparer à partir du "?", et comme on veut récupérer juste la première partie je précise déjà l'index de l'élément
+
+    - On teste et on récupère bien */blog/tutoriels*
+
+6. Il faut contruire la partie de droite, pour ça on peut utiliser la fonction **http_build_query**.
+
+    Exemple d'utilisation :
+
+    ```
+    dd(http_build_query(['a' => 3, 'b' => 'c', 'tableau' => [1, 2, 3]]));
+    ```
+
+    - Ca nous retournera : "a=3&b=c&tableau%5B0%5D=1&tableau%5B1%5D=2&tableau%5B2%5D=3"
+
+    Alors, dans notre cas, on va l'utiliser de la façon suivante :
+
+    ```
+    if (isset($_GET['page']) && $_GET['page'] === '1') {
+        
+        $uri = $_SERVER['REQUEST_URI'];
+        $uri = explode('?', $uri)[0];
+        $get = $_GET;
+        
+        unset($get['page']);
+        dd(http_build_query($get));
+        dd($uri);
+    }
+    ```
+
+    - On sauvegarde le retour de la variable globale $_GET.
+
+    - On détruit la valeur de la clé 'page'
+
+    - On construit l'url avec ce qu'il reste, ça va nous retourner "param2=2"
+
+    Quand on veut travailler aves une variable globale c'est mieux de la stocker dans une variable intermédiaire pour ne pas causer des bugs en modificant directement la valeur de la variable globale.
+
+7. Si on teste on voit que l'on reçoit bien juste le deuxième paramètre et pas ?page, si on efface le deuxième paramètre on nous envoi vide.
+
+    Il nous suffit de recomposer l'url :
+
+    ```
+    $query = http_build_query($get);
+    if (!empty($query)) {
+        $uri = $uri . '?' .$query;
+    }
+    ```
+
+8. On teste en tapant les deux paramètres et ils nous retournent juste param=2. Ce code permet d'alléger index.php.
 
 
-3. 
+
+
+
+
+
+
+
+
+
+
+
+ 

@@ -18,13 +18,6 @@ if (!filter_var($page, FILTER_VALIDATE_INT)) {
     throw new Exception('Numéro de page invalide');
 }
 
-// Si page /?page=1 redirection vers la page home
-if ($page === '1') {
-    header('Location: ' .$router->url('home'));
-    http_response_code((301));
-    exit;
-}
-
 $currentPage = (int)$page;
 
 // Calcule le nombre d'articles total dans la bdd
