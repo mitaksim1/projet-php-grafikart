@@ -13,6 +13,11 @@ $whoops = new \Whoops\Run;
 $whoops->pushHandler(new \Whoops\Handler\PrettyPageHandler);
 $whoops->register();
 
+// Fonction qui va convertir les données en entité html
+function e (string $string) {
+    return htmlentities($string);
+}
+
 // Gére la redirection de la page si ?page=1
 if (isset($_GET['page']) && $_GET['page'] === '1') {
     // réécrire l'url sans le paramètre ?page

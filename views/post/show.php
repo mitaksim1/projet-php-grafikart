@@ -1,5 +1,7 @@
 <?php
 
+use PDO;
+use Exception;
 use App\Connection;
 use App\Model\Post;
 
@@ -32,3 +34,10 @@ if ($post->getSlug() !== $slug) {
     header('Location: ' . $url);
 }
 
+?>
+
+<h1><?= e($post->getName()) ?></h1>
+<p class="text-muted"><?= $post->getCreatedAt()->format('d F Y') ?></p>
+<p><?= $post->getFormattedContent() ?></p>
+
+   

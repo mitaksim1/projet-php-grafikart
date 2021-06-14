@@ -110,6 +110,32 @@ On avait déjà crée la base de notre code dans **public/index.php** : *->get('
 
 11. On teste en enlèvant une lettre du slug et on est bien redirigé vers la bonne.
 
+12. Pour afficher l'article on va reprendre la structure de la carte.
+
+    ```
+    <h1><?= htmlentities($post->getName()) ?></h1>
+    <p class="text-muted"><?= $post->getCreatedAt()->format('d F Y') ?></p>
+    <p><?= $post->getExcerpt() ?></p>
+    <p>
+        <a href="<?= $router->url('post', ['id' => $post->getID(), 'slug' =>    $post->getSlug()]) ?>" class="btn btn-primary">Voir plus</a>
+    </p>
+    ```
+
+13. Pour ne pas avoir besoin d'écrire *htmlentities* à chaque fois, on pourra créer une fonction. Dans **public/index.php** : 
+
+    ```
+    function e (string $string) {
+        return htmlentities($string);
+    }
+    ```
+
+14. Maintenant, on pourra juste appeler cette fonction quand on en aura besoin.
+
+    ```
+    <h1><?= e($post->getName()) ?></h1>
+    ```
+
+
 
 
 

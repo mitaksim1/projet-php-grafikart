@@ -24,6 +24,10 @@ class Post {
         return $this->name;
     }
 
+    public function getFormattedContent(): ?string {
+        return nl2br(e($this->content));
+    } 
+
     // Retourne l'extrait du contenu
     public function getExcerpt(): ?string
     {
