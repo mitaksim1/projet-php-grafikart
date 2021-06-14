@@ -170,15 +170,130 @@ Laisser les fonctions dans le fichier **index.php** n'est pas l'idéal, on va al
     composer dump-autoload
     ```
 
- 
+## Afficher la ou les catégorie(s) de l'article en forme de liste
 
+1. On fait une nouvelle requête préparé : 
 
+    ```
+    $query = $pdo->prepare('SELECT * FROM post-category as pc WHERE pc.post_id = :id');
+    
+    $query->execute(['id' => $post->getId()]);
+    $categories = $query->fetchAll();
+    ```
 
+2. On fait un **dd($categories)** et on voit que l'on reçoit un tableau avec deux clés : **post_id** et **category_id**.
 
+    ```
+     array:3 [▼
+      0 => array:4 [▼
+        "post_id" => "6"
+        0 => "6"
+        "category_id" => "2"
+        1 => "2"
+      ]
+      1 => array:4 [▼
+        "post_id" => "6"
+        0 => "6"
+        "category_id" => "4"
+        1 => "4"
+      ]
+      2 => array:4 [▼
+        "post_id" => "6"
+        0 => "6"
+        "category_id" => "5"
+        1 => "5"
+      ]
+    ]
+    ```
 
+    Ce qui nous intéresse c'est de récupérer le nom des catégories, pas ces deux cahmps.
 
+3. On va devoir alors, faire une jointure avec la table **category**.
 
+    ```
+    $query = $pdo->prepare('
+    SELECT c.id, c.slug, c.name 
+    FROM post_category pc 
+    JOIN category c ON pc.category_id = c.id
+    WHERE pc.post_id = :id');
+    ```
 
+    **SELECT c.id, c.slug, c.name **: on ne va récupérer que les informations qui nous intéressent.
 
+4. On re teste et on reçoit bien les données demandées.
 
+5. Comme on a fit pour la table Post, on va créer une classe qui va représenter la table Category aussi.
 
+    ```
+    <?php
+    namespace App\Model;
+    
+    class Category {
+    
+        private $id;
+    
+        private $slug;
+    
+        private $name;
+    
+        public function getId(): ?int 
+        {
+            return $this->id;
+        }
+    
+        public function getSlug(): ?string
+        {
+            return $this->slug;
+    
+        }
+    
+        public function getName(): ?string
+        {
+            return $this->name;
+    
+        }
+    
+    }
+    ```
+
+6. Maintenant, que l'on a crée cette classe on pourra utiliser un **fetchMode()** dans la requête.
+
+    ```
+    $query = $pdo->prepare('
+    SELECT c.id, c.slug, c.name 
+    FROM post_category pc 
+    JOIN category c ON pc.category_id = c.id
+    WHERE pc.post_id = :id');
+    
+    $query->execute(['id' => $post->getId()]);
+    $query->setFetchMode(PDO::FETCH_CLASS, Category::class);
+    $categories = $query->fetch();
+    dd($categories);
+    ```
+
+    Si on teste on voit que l'on ne reçoit plus un simple tableau, mais un tableau d'objet Category.
+
+7. Un e petite astuce, pour importer la classe Category, on pourra utiliser cette syntaxe pour "économiser" une ligne.
+
+    ```
+    use App\Model\{Post, Category};
+    ```
+
+8. Pour afficher les catégories dans le code html, on va faire une boucle sur ce tableau.
+
+    ```
+    <?php foreach ($categories as $category): ?>
+        <a href="#"><?= e($category->getName()) ?></a>
+    <?php endforeach ?>
+    ```
+
+9. Pour aider le navigateur, on a précise avec le docBlock :
+
+    ```
+    /**
+     * @var Category[]
+     */
+    $categories = $query->fetchAll();
+    ```
+
+10. On teste sans le dump et ça marche!

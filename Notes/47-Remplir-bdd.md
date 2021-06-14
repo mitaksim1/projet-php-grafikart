@@ -132,9 +132,9 @@ On va créer un script qui va s'occuper de remplir automatiquement notre base de
     }
     ```
 
-9. On teste en lançant la commande *php commands/fill.phph*, j'ai bien les données comme le mec sauf que les id's des catégories dans post_category ne vont que jusqu'à 3 au lieu de 5 (?) et ils ne sont pas très aléatoire puisque ils de suivent les un après les autres. 
+9. On teste en lançant la commande *php commands/fill.php*, j'ai bien les données comme le mec sauf que les id's des catégories dans post_category ne vont que jusqu'à 3 au lieu de 5 (?) et ils ne sont pas très aléatoire puisque ils de suivent les un après les autres. 
 
-10. On va créer aussi UN UTILISATEUR POUR TESTER.
+10. On va créer aussi un utilisateur pour tester.
 
     ```
     $password = password_hash('admin', PASSWORD_BCRYPT);
