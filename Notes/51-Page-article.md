@@ -297,3 +297,31 @@ Laisser les fonctions dans le fichier **index.php** n'est pas l'idéal, on va al
     ```
 
 10. On teste sans le dump et ça marche!
+
+11. Si on veut mettre une virgule entre chaque catégorie :
+
+    ```
+    <?php foreach ($categories as $key => $category): ?>
+        <?php if ($key > 0): ?>
+        ,
+        <?php endif ?>
+    <a href=""><?= e($category->getName()) ?></a>
+    <?php endforeach ?>
+    ```
+
+    Ca marche, mais ça nous laisse un espace inutile avant la virgule, alors ça se complique un peu parce que là on est en trqin de mélanger php et le html, mais une solution serait :
+
+    ```
+    <?php foreach ($categories as $key => $category): 
+        if ($key > 0): 
+            echo ', ';
+        endif
+    ?> <a href=""><?= e($category->getName()) ?></a>
+      <?php endforeach ?>
+    ```
+
+    Ce n'est pas très propre non plus, mais c'est mieux que la façon précédente.
+
+    Dans mon cas, ça n'a pas marché, mais c'est pas grave je continues comme ça.
+
+12. 

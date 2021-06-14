@@ -55,8 +55,11 @@ $categories = $query->fetchAll();
 
 <h1><?= e($post->getName()) ?></h1>
 <p class="text-muted"><?= $post->getCreatedAt()->format('d F Y') ?></p>
-<?php foreach ($categories as $category): ?>
-    <a href=""><?= e($category->getName()) ?></a>
+<?php foreach ($categories as $key => $category): 
+    if ($key > 0): 
+        echo ', ';
+    endif
+    ?><a href="#"><?= e($category->getName()) ?></a>
 <?php endforeach ?>
 <p><?= $post->getFormattedContent() ?></p>
 
