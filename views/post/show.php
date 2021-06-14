@@ -58,8 +58,9 @@ $categories = $query->fetchAll();
 <?php foreach ($categories as $key => $category): 
     if ($key > 0): 
         echo ', ';
-    endif
-    ?><a href="#"><?= e($category->getName()) ?></a>
+    endif;
+    $category_url = $router->url('category', ['id' => $category->getId(), 'slug' => $category->getSlug()]);
+    ?><a href="<?= $category_url ?>"><?= e($category->getName()) ?></a>
 <?php endforeach ?>
 <p><?= $post->getFormattedContent() ?></p>
 

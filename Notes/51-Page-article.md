@@ -324,4 +324,28 @@ Laisser les fonctions dans le fichier **index.php** n'est pas l'idéal, on va al
 
     Dans mon cas, ça n'a pas marché, mais c'est pas grave je continues comme ça.
 
-12. 
+## Faire marcher les liens des catégories
+
+1. On va avoir besoin de changer la route */blog/category* que l'on avait crée.
+
+    ```
+    ->get('/blog/category[*:slug]-[i:id]', 'category/show', 'category')
+    ```
+
+2. Ensuite on appeler cette route dans le lien :
+
+    ```
+    $category_url = $router->url('category', ['id' => $category->getId(), 'slug' => $category->getSlug()]);
+    ?><a href="<?= $category_url ?>"><?= e($category->getName()) ?></a>
+    ```
+
+3. Si on teste, on voit que l'on est redirigé vers la mauvaise url, pourtant le chemin en bas de page est bon.
+
+    Apparement l'ordre des routes comptent, parce que la route */blog/[*:slug]-[i:id]* est en train de prendre le dessus.
+
+    On va donc inverser l'ordre des url's crées.
+
+4. On teste et ça ne marche que pour le dernier lien.
+
+    On inspecte la page, on va dans *Network*, on re clique sur *Disable cache* et là ça marche. Apparemnt toutes les redirections 301 restent enregistrées dans le cache.
+
