@@ -135,6 +135,47 @@ On avait déjà crée la base de notre code dans **public/index.php** : *->get('
     <h1><?= e($post->getName()) ?></h1>
     ```
 
+15. Là, on ne veut pas récupérer l'extrait de l'article, mais l'article entier :
+
+    ```
+    <h1><?= e($post->getName()) ?></h1>
+    <p class="text-muted"><?= $post->getCreatedAt()->format('d F Y') ?></p>
+    <p><?= $post->getFormattedContent() ?></p>
+    ```
+
+    - **getFormattedContent()** : méthode à créer
+
+## Autoloader et les fonctions
+
+Laisser les fonctions dans le fichier **index.php** n'est pas l'idéal, on va alora créer un fichier où on va mettre toutes les fonctons qu'on aurait besoin.
+
+1. Dans **src** on crée le fichier **helpers.php** où on va passer la fonction **e** que l'on avait créée.
+
+2. Au lieu de faire un require de ce fichier dans *index.php*, on va demander à autoloader de charger ce fichier :
+
+    Dans **composer.php** :
+
+    ```
+    "autoload": {
+        "files": ["src/helpers.php"],
+        "psr-4": {
+            "App\\": "src/"
+        }
+    },
+    ```
+
+3. Ne pas oublier d'actualiser autoload dans Composer :
+
+    ```
+    composer dump-autoload
+    ```
+
+ 
+
+
+
+
+
 
 
 
