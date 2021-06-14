@@ -44,8 +44,10 @@ class Router {
     {
         // match : vérifie si il y a une correspondance entre l'url et une des routes enregistrées
         $match = $this->router->match();
+        // dd($match);
         // Ca envoi un tableau associatif contenant les correspondances
         $view = $match['target'];
+        $params = $match['params'];
         // ob_start va sauvegarder le require
         // Pour donner acccès à toutes les variables contenues dans AltoRouter
         $router = $this;
