@@ -2,7 +2,7 @@
 
 use App\Connection;
 use App\Model\{Category, Post};
-use App\URL;
+use App\PaginatedQuery;
 
 $id = (int)$params['id'];
 $slug = $params['slug'];
@@ -35,37 +35,19 @@ if ($category->getSlug() !== $slug) {
 }
 // dd($category);
 
-$currentPage = URL::getPositiveInt('page', 1);
+$paginatedQuery = new PaginatedQuery(
+    "SELECT p.* 
+        FROM post p 
+        JOIN post_category pc ON pc.post_id = p.id
+        WHERE pc.category_id = {$category->getId()}
+        ORDER BY created_at DESC", 
+    "SELECT COUNT(category_id) FROM post_category WHERE category_id = {$category->getId()}",
+    Post::class
+);
+/** @var Post[] */
+$posts = $paginatedQuery->getItems();
+dd($posts);
 
-// Récupère le nombre des articles pour la catégorie donnée
-$count = (int)$pdo
-    ->query('SELECT COUNT(category_id) FROM post_category WHERE category_id = ' . $category->getId())
-    ->fetch(PDO::FETCH_NUM)[0];
-
-// Calcule le nombre d'articles qu'on mettra par page
-$perPage = 12;
-$pages = ceil($count / $perPage);
-// dd($pages);
-
-if ($currentPage > $pages) {
-    throw new Exception('Cette page n\'existe pas');
-}
-
-// On calcule le offset par page
-$offset = $perPage * ($currentPage -1);
-
-// On récupére les articles les plus récents
-$query = $pdo->query("
-    SELECT p.* 
-    FROM post p 
-    JOIN post_category pc ON pc.post_id = p.id
-    WHERE pc.category_id = {$category->getId()}
-    ORDER BY created_at 
-    DESC LIMIT $perPage 
-    OFFSET $offset
-");
-
-$posts = $query->fetchAll(PDO::FETCH_CLASS, Post::class);
 // On sauvegarde la route à envoyer par le lien
 $link = $router->url('category', ['id' => $category->getId(), 'slug' => $category->getSlug()]);
 
