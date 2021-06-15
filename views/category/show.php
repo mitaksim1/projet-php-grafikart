@@ -41,11 +41,10 @@ $paginatedQuery = new PaginatedQuery(
         JOIN post_category pc ON pc.post_id = p.id
         WHERE pc.category_id = {$category->getId()}
         ORDER BY created_at DESC", 
-    "SELECT COUNT(category_id) FROM post_category WHERE category_id = {$category->getId()}",
-    Post::class
+    "SELECT COUNT(category_id) FROM post_category WHERE category_id = {$category->getId()}"
 );
 /** @var Post[] */
-$posts = $paginatedQuery->getItems();
+$posts = $paginatedQuery->getItems(Post::class);
 // dd($posts);
 
 // On sauvegarde la route à envoyer par le lien

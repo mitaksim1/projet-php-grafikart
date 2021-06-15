@@ -239,6 +239,83 @@ HTML;
 
     - Comme cette méthode va être appelé dans deux méthodes différentes (getItems et nextLink) et pour que la connexion à PDO ne se fasse qu'une seule fois on va créer une condition pour qu'elle ne soit faite qu'une seule fois.
 
+### A vous de jouer !
+
+1. Essayer de créer une méthode qui va remplacer le code de $count à $posts dans **views/post/index.php**.
+
+    ```
+    $paginatedQuery = new PaginatedQuery(
+        "SELECT * FROM post ORDER BY created_at DESC",
+        "SELECT COUNT(id) FROM post"
+    );
+
+    $posts = $paginatedQuery->getItems(Post::class);
+    $link = $router->url('home');
+    ?>
+
+    <h1>Mon Blog</h1>
+
+    <?php //dump($posts);exit; 
+    ?>
+
+    <div class="row">
+        <?php foreach ($posts as $post) : ?>
+            <div class="col-md-3">
+                <?php require 'card.php' ?>
+            </div>
+        <?php endforeach ?>
+    </div>
+
+    <div class="d-flex justify-content-between my-4">
+        <?= $paginatedQuery->previousLink($link) ?>
+        <?= $paginatedQuery->nextLink($link) ?>
+    </div>
+    ```
+
+2. Essayer de créer une condition pour que l'appel à getItem() ne soit pas possible di déjàa appelé.
+
+    - On commence par cdréer une nouvelle propriété qui va garder les items.
+
+    ```
+    private $items;
+    ```
+
+    - On change la méthode getItems() comme suit :
+
+    ```
+    public function getItems(string $classMapping): array
+    {
+        if ($this->items === null) {
+            // dump('Je suis appelé');
+            // 1. On a besoin de la page courante
+            $currentPage = $this->getCurrentPage();
+
+            // 2. On a besoin de savoir combien de pages existent
+            $pages = $this->getPages();
+            
+            // 4. Envoi une exception si la page n'existe pas
+            if ($currentPage > $pages) {
+                throw new Exception('Cette page n\'existe pas');
+            }
+            // 5. On calcule le offset par page
+            $offset = $this->perPage * ($currentPage -1);
+
+            // On récupére les articles les plus récents
+            $this->items = $this->pdo->query($this->query .
+                " LIMIT {$this->perPage} 
+                OFFSET $offset
+            ")
+            ->fetchAll(PDO::FETCH_CLASS, $classMapping);
+        }
+        return $this->items;   
+    } 
+    ```
+
+
+
+
+
+
 
 
 

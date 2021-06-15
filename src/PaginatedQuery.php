@@ -10,8 +10,6 @@ class PaginatedQuery {
 
     private $queryCount;
 
-    private $classMapping;
-
     private $pdo;
 
     private $perPage;
@@ -19,37 +17,42 @@ class PaginatedQuery {
     // Nombre d'éléments total en bdd
     private $count;
 
-    public function __construct(string $query, string $queryCount, string $classMapping, ?\PDO $pdo = null, int $perPage = 12)
+    private $items;
+
+    public function __construct(string $query, string $queryCount, ?\PDO $pdo = null, int $perPage = 12)
     {
         $this->query = $query;
         $this->queryCount = $queryCount;
-        $this->classMapping = $classMapping;
         // Si PDO n'est pas définit on prend la connexion globale de l'appli
         $this->pdo = $pdo ?: Connection::getPDO();
         $this->perPage = $perPage;
     }
 
-    public function getItems(): array
+    public function getItems(string $classMapping): array
     {
-        // 1. On a besoin de la page courante
-        $currentPage = $this->getCurrentPage();
+        if ($this->items === null) {
+            // dump('Je suis appelé');
+            // 1. On a besoin de la page courante
+            $currentPage = $this->getCurrentPage();
 
-        // 2. On a besoin de savoir combien de pages existent
-        $pages = $this->getPages();
-        
-        // 4. Envoi une exception si la page n'existe pas
-        if ($currentPage > $pages) {
-            throw new Exception('Cette page n\'existe pas');
+            // 2. On a besoin de savoir combien de pages existent
+            $pages = $this->getPages();
+            
+            // 4. Envoi une exception si la page n'existe pas
+            if ($currentPage > $pages) {
+                throw new Exception('Cette page n\'existe pas');
+            }
+            // 5. On calcule le offset par page
+            $offset = $this->perPage * ($currentPage -1);
+
+            // On récupére les articles les plus récents
+            $this->items = $this->pdo->query($this->query .
+                " LIMIT {$this->perPage} 
+                OFFSET $offset
+            ")
+            ->fetchAll(PDO::FETCH_CLASS, $classMapping);
         }
-        // 5. On calcule le offset par page
-        $offset = $this->perPage * ($currentPage -1);
-
-        // On récupére les articles les plus récents
-        return $this->pdo->query($this->query .
-            " LIMIT {$this->perPage} 
-            OFFSET $offset
-        ")
-        ->fetchAll(PDO::FETCH_CLASS, $this->classMapping);
+        return $this->items;   
     } 
     
     public function previousLink(string $link): ?string 
