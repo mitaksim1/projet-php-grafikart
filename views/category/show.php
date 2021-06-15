@@ -46,14 +46,12 @@ $paginatedQuery = new PaginatedQuery(
 );
 /** @var Post[] */
 $posts = $paginatedQuery->getItems();
-dd($posts);
+// dd($posts);
 
 // On sauvegarde la route à envoyer par le lien
 $link = $router->url('category', ['id' => $category->getId(), 'slug' => $category->getSlug()]);
-
 // Donne un titre à l'onglet de la page catégorie
 $title = "Catégorie {$category->getName()}";
-
 ?>
 
 <h1><?= e($title) ?></h1>
@@ -67,17 +65,8 @@ $title = "Catégorie {$category->getName()}";
 </div>
 
 <div class="d-flex justify-content-between my-4">
-    <?php if ($currentPage > 1): ?>
-        <?php
-        // Pour ne pas écraser la valeur de $link, on va créer une variable intermédiaire pour la condition
-        $link_2 = $link;
-        if ($currentPage > 2) $link_2 = $link . '?page=' . ($currentPage - 1);
-        ?>
-        <a href="<?= $link_2 ?>" class="btn btn-primary">&laquo; Page précédente</a>
-    <?php endif ?>
-    <?php if ($currentPage < $pages): ?>
-        <a href="<?= $link ?>?page=<?= $currentPage + 1 ?>" class="btn btn-primary ml-auto"> Page suivante &raquo;</a>
-    <?php endif ?>
+    <?= $paginatedQuery->previousLink($link) ?>
+    <?= $paginatedQuery->nextLink($link) ?>
 </div>
 
 

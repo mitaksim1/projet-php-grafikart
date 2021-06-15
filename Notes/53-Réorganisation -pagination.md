@@ -138,7 +138,107 @@ Il nous suffit maintenant de créer nos classes.
 
     On a fait un dump pour debuger et on reçoit bien les nombre d'articles convenu par page.
 
-5. On va générer les liens vers les pages précédentes/suivantes.
+5. On va créer la méthode qui va gérer les liens vers les pages précédentes/suivantes.
+
+    ```
+    public function previousLink(): ?string 
+    {
+
+    }
+    ```
+
+6. A l'intérieur de cette méthode on va avoir besoin de la page courante, on a pas accès à la variable $currentpage de getItems(), soit on crée une propriété qui va stocker cette information pour nous soit on va créer une autre méthode. Nous on va choisir la deuxième option.
+
+    ```
+    public function getCurrentPage(): int
+    {
+        // 1. On a besoin de la page courante
+        $currentPage = URL::getPositiveInt('page', 1);
+    }
+    ```
+
+7. Maintenant dans **getItems()** on n'a qu'à faire appel à cette méthode :
+
+    ```
+    $currentPage = $this->getCurrentPage();
+    ```
+
+8. On fait la même chose pour la méthode **previousLink()**.
+
+    ```
+    public function previousLink(string $link): ?string 
+    {
+        $currentPage = $this->getCurrentPage();
+        if ($currentPage <= 1) return null;
+        if ($currentPage > 2) $link .= "?page=" . ($currentPage - 1);
+        return <<<HTML
+            <a href="{$link}" class="btn btn-primary">&laquo; Page précédente</a>
+HTML;
+    }
+    ```
+
+9. Quand j'ai voulu tester pour voir si ça marche, j'ai du resémarrer l'ordi à cause d'un bug de la machine virtuelle, alor j'a perdu la page où j'étais et c'est là que je me suis rendu compre qu'il y avait une erreur au moment d'accèder à un article, le message disait que la variable $tite était undefined. 
+
+    Le soucis c'était au niveau du fichier **views/post/show.php**, en fait, on n'avait pas déclarée la variable $title ligne 57 : 
+
+    On avait codé ça :
+
+    ```
+    <h1><?= e($post->getName()) ?></h1>
+    ```
+
+    En fait, il fallait que l'on déclare la variable comme suit, pour après l'appeler.
+
+    ```
+    $title = $post->getName();
+    ```
+
+    ```
+    <h1><?= e($title) ?></h1>
+    ```
+
+10. Là, je teste et ça a remarché, ouf! Par contre, comme on a effacé le code pour la page suivante, j'ai du taper *?page=2* sur l'adresse url pour voir si le lien s'affichait bien.
+
+11. On va faire la même chose pour la page suivante en créant la méthode **nextLink()**.
+
+    ```
+    public function nextLink(string $link): ?string
+    {
+        $currentPage = $this->getCurrentPage();
+        // On a besoin de savoir le nombre de pages qui existente
+        $pages = $this->getPages();
+        // Si la page où on est est supérieur au nombre de pages total, on n'a besoin de rien faire
+        if ($currentPage >= $pages) return null;
+        $link .= "?page=" . ($currentPage + 1);
+        return <<<HTML
+            <a href="{$link}" class="btn btn-primary ml-auto">Page suivante &raquo;</a>
+HTML; 
+    }
+    ```
+
+12. Comme on avait besoin de savoir combien de pages on a pour savoir s'il faut mettre le lien où pas, on a enlève le code de getItems() pour le mettre dans une autre méthode **getPages()** :
+
+    ```
+    private function getPages(): int
+    { 
+        if ($this->count === null) {
+            // Récupère le nombre des articles pour la catégorie donnée
+            $this->count = (int)$this->pdo
+            //->query('SELECT COUNT(category_id) FROM post_category WHERE category_id = ' . $category->getId())
+            ->query($this->queryCount)
+            ->fetch(PDO::FETCH_NUM)[0];
+        }
+        
+        // Calcule le nombre de pages que l'on aura
+        $pages = ceil($this->count / $this->perPage);
+        // dd($pages);  
+
+        return $pages;
+    }
+    ```
+
+    - Comme cette méthode va être appelé dans deux méthodes différentes (getItems et nextLink) et pour que la connexion à PDO ne se fasse qu'une seule fois on va créer une condition pour qu'elle ne soit faite qu'une seule fois.
+
 
 
 
