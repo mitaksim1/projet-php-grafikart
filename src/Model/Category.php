@@ -11,6 +11,8 @@ class Category {
 
     private $post_id;
 
+    private $post;
+
     public function getId(): ?int 
     {
         return $this->id;
@@ -33,4 +35,8 @@ class Category {
         return $this->post_id;
     }
 
+    public function setPost(Post $post) 
+    {
+        return $this->post = $post;
+    }
 }
