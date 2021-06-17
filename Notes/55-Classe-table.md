@@ -100,6 +100,18 @@ L'idée serait de pouvoir appeler une nouvelle classe qui aurait des méthodes p
 
 7. On teste et tout continue à marcher.
 
+8. L'écriture : *$posts = $var[0]; $pagination = $var[1];* n'est pas très jolie, avec les nouvelles versions de PHP on a cette façon d'écrire qui est plus propre et prend moins de ligne.
+
+    ```
+    [$posts, $pagination] = $table->findPaginated();
+    ```
+
+    - $posts correspondra au premier élément du tableau et $pagination au deuxième
+
+9. 
+
+
+
 
 
 
