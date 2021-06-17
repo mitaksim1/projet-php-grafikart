@@ -195,3 +195,73 @@ Dans ce chapitre on veut afficher la liste des catégories dans le listing des a
     </div>
     ```
 15. On teste et tous les articles ont bien les catégories juste après la date.
+
+### Améliorer l'appel aux catégories à afficher
+
+1. Il y a une façon plus propre de lister les catégories dans les cartes.
+
+    Consigne de "A vous de jouer" donné par le mec.
+
+    ```
+    <?php
+    // On crée un tableau contenant la syntaxe html d'un lien
+    
+    /* Ex. : [
+        '<a hre="/category/123">Categorie'</a>',
+        '<a hre="/category/123">Categorie'</a>',
+        '<a hre="/category/123">Categorie'</a>',
+        '<a hre="/category/123">Categorie'</a>',
+        ]
+    */
+    // On regroupe les éléments du tableau avec une ","
+
+    ?>
+    ```
+
+2. On commence par créer un tableau qui va stocker les lien vers les catégories :
+
+    ```
+    $categories = [];
+    ```
+
+3. On boucle sur les catégories d'un article donné : 
+
+    ```
+    foreach ($post->getCategories() as $category) {
+        $url = $router->url('category', ['id' => $category->getId(), 'slug' => $category->getSlug()]);
+        $categories[] = <<<HTML
+        <a href="<?= {$url}">{$category->getName()}</a>
+    HTML;
+
+    }
+    ```
+
+    - Pour chaque catégorie, on va créer un lien, ce lien avait déjà été crée avant dans le code html.
+
+4. On efface l'ancienne boucle que l'on avait insérée dans le code html et on la remplace par :
+
+    ```
+    <div class="card mb-3">
+        <div class="card-body">
+            <h5 class="card-title"><?= htmlentities($post->getName()) ?></h5>
+            <p class="text-muted"><?= $post->getCreatedAt()->format('d F Y') ?> 
+            <?php if (!empty($post->getCategories())): ?>
+            ::
+            <?= implode(', ', $categories) ?>
+            <?php endif ?>
+
+            </p>
+            <p><?= $post->getExcerpt() ?></p>
+            <p>
+                <a href="<?= $router->url('post', ['id' => $post->getID(), 'slug' => $post->getSlug()]) ?>" class="btn btn-primary">Voir plus</a>
+            </p>
+        </div>
+    </div>
+    ```
+
+5.
+
+
+
+
+
