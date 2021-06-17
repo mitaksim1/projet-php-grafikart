@@ -1,14 +1,11 @@
 <?php
 // On crée un tableau contenant la syntaxe html d'un lien
-$categories = [];
-// On boucle sur les catégories associés à l'article
-foreach ($post->getCategories() as $category) {
+$categories = array_map(function ($category) use ($router) {
     $url = $router->url('category', ['id' => $category->getId(), 'slug' => $category->getSlug()]);
-    $categories[] = <<<HTML
-    <a href="<?= {$url}">{$category->getName()}</a>
+    return <<<HTML
+    <a href="{$url}">{$category->getName()}</a>
 HTML;
-}
-// dd(implode(', ', $categories));
+}, $post->getCategories());
 
 ?>
 <div class="card mb-3">

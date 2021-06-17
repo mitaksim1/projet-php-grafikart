@@ -259,7 +259,37 @@ Dans ce chapitre on veut afficher la liste des catégories dans le listing des a
     </div>
     ```
 
-5.
+### simplification du code avec array_map
+
+https://www.php.net/manual/fr/function.array-map.php
+
+Exemple d'utilisation :
+
+```
+$a = ['jean', 'marc', 'jose'];
+$b = array_map(function ($nom) {
+    return strtoupper($nom);
+}, $a);
+
+dd($b);
+```
+
+1. On va remplacer la boucle que l'on avait fait dans le tablea $categories par la focntion array_map comme suit :
+
+    ```
+    $categories = array_map(function ($category) use ($router) {
+        $url = $router->url('category', ['id' => $category->getId(), 'slug' => $category->getSlug()]);
+        return <<<HTML
+        <a href="<?= {$url}">{$category->getName()}</a>
+    HTML;
+    }, $post->getCategories());
+    ```
+
+    - On fait un use de $router juste après la définition du paramètre pour pouvoir accèder à la variable qui est en dehors de cette fonction.
+
+    Ce n'est pas très simple pour les débutants, on pourra continuer à utiliser la boucle foreach, mais c'était juste pour qu'on connaîsse cette fonction.
+
+2. Au moment de tester, j'ai remarqué que j'ai un soucis quand je clique sur le lien, il me donne toujour le même titre peut importe le nom de la catégorie. Je vais continuer comme ça et si à un moment ça m'empêche de continuer j'essaierais de corriger l'erreur.
 
 
 

@@ -47,10 +47,36 @@ $paginatedQuery = new PaginatedQuery(
 $posts = $paginatedQuery->getItems(Post::class);
 // dd($posts);
 
+// On récupère l'id de chaque article
+$postsById = [];
+foreach ($posts as $post) {
+    // On passe l'id du post comme index du tableau $postsById
+    // et la valeur de cet index sera le post lui même
+    $postsById[$post->getId()] = $post;
+}
+// dd(array_keys($postsById));
+
+$categories = $pdo
+    ->query('SELECT c.*, pc.post_id
+        FROM post_category pc
+        JOIN category c ON c.id = pc.category_id
+        WHERE pc.post_id IN (' . implode(',', array_keys($postsById)) . ')'
+    )->fetchAll(PDO::FETCH_CLASS, Category::class);
+// dump($categories);
+
+// On parcourt les catégories
+foreach ($categories as $category) {
+    // On trouve l'article $posts correspondant à la ligne
+    // On ajoute la catégorie à l'article
+    $postsById[$category->getPostId()]->addCategory($category);
+}
+   
+// dump($posts);
+
 // On sauvegarde la route à envoyer par le lien
 $link = $router->url('category', ['id' => $category->getId(), 'slug' => $category->getSlug()]);
 // Donne un titre à l'onglet de la page catégorie
-$title = "Catégorie {$category->getName()}";
+$title = 'Catégorie ' . $category->getName();
 ?>
 
 <h1><?= e($title) ?></h1>
