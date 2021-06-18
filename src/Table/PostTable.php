@@ -21,31 +21,30 @@ class PostTable extends Table {
         // On récupère les articles
         $posts = $paginatedQuery->getItems(Post::class);
 
-        // On hydrate les catégories
-        // On récupère l'id de chaque article
-        $postsById = [];
-        foreach ($posts as $post) {
-            // On passe l'id du post comme index du tableau $postsById
-            // et la valeur de cet index sera le post lui même
-            $postsById[$post->getId()] = $post;
-        }
-        // dd(array_keys($postsById));
+        // On appelle la méthode hydratePosts()
+        (new CategoryTable($this->pdo))->hydratePosts($posts);
 
-        $categories = $this->pdo
-            ->query('SELECT c.*, pc.post_id
-                FROM post_category pc
-                JOIN category c ON c.id = pc.category_id
-                WHERE pc.post_id IN (' . implode(',', array_keys($postsById)) . ')'
-            )->fetchAll(PDO::FETCH_CLASS, Category::class);
-        // dump($categories);
-
-        // On parcourt les catégories
-        foreach ($categories as $category) {
-            // On trouve l'article $posts correspondant à la ligne
-            // On ajoute la catégorie à l'article
-            $postsById[$category->getPostId()]->addCategory($category);
-        }
         return [$posts, $paginatedQuery];
     }
 
-}   
+    public function findPaginatedForCategory(int $categoryId) 
+    {
+        $paginatedQuery = new PaginatedQuery(
+            "SELECT p.* 
+                FROM post p 
+                JOIN post_category pc ON pc.post_id = p.id
+                WHERE pc.category_id = {$categoryId}
+                ORDER BY created_at DESC", 
+            "SELECT COUNT(category_id) FROM post_category WHERE category_id = {$categoryId}"
+        );
+        
+        $posts = $paginatedQuery->getItems(Post::class);
+        // dd($posts);
+        
+        // On appelle la méthode hydratePosts()
+        (new CategoryTable($this->pdo))->hydratePosts($posts);
+
+        return [$posts, $paginatedQuery];    
+    }
+}
+  

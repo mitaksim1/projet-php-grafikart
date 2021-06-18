@@ -252,7 +252,123 @@ L'idée serait de pouvoir appeler une nouvelle classe qui aurait des méthodes p
     }
     ```
 
-    On teste eo o abien le message crée dans la classe qui apparît.
+    On teste et on a bien le message crée dans la classe qui apparaît.
+
+### Affichage des catégories 
+
+En peut plus bas dans le code on avait la requête qui s'occupait de récupérer les catégories pour un article donnée. La requête ressemble à *findPaginated()*, on mettre $categories comme paramètre de cette méthode en l'initialisant comme null, mais ça deviendrait compliqué à gérer, alors on va créer une méthode spécifique pour cette requête.
+
+1. On crée la méthode **findPaginatedForCategory** et on copie le code qui était dans *views/category/show.php* :
+*
+    ```
+    public function findPaginatedForCategory(int $categoryId) 
+    {
+        $paginatedQuery = new PaginatedQuery(
+            "SELECT p.* 
+                FROM post p 
+                JOIN post_category pc ON pc.post_id = p.id
+                WHERE pc.category_id = {$category->getId()}
+                ORDER BY created_at DESC", 
+            "SELECT COUNT(category_id) FROM post_category WHERE category_id = {$category->getId()}"
+        );
+        /** @var Post[] */
+        $posts = $paginatedQuery->getItems(Post::class);
+        // dd($posts);
+        
+        // On récupère l'id de chaque article
+        $postsById = [];
+        foreach ($posts as $post) {
+            // On passe l'id du post comme index du tableau $postsById
+            // et la valeur de cet index sera le post lui même
+            $postsById[$post->getId()] = $post;
+        }
+        // dd(array_keys($postsById));
+        
+        $categories = $pdo
+            ->query('SELECT c.*, pc.post_id
+                FROM post_category pc
+                JOIN category c ON c.id = pc.category_id
+                WHERE pc.post_id IN (' . implode(',', array_keys($postsById)) . ')'
+            )->fetchAll(PDO::FETCH_CLASS, Category::class);
+        // dump($categories);
+        
+        // On parcourt les catégories
+        foreach ($categories as $category) {
+            // On trouve l'article $posts correspondant à la ligne
+            // On ajoute la catégorie à l'article
+            $postsById[$category->getPostId()]->addCategory($category);
+        }
+           
+        // dump($posts);
+    }
+    ```
+
+2. On remplace l'appel à l'id de la catégorie *($category->getId())* par la variable passée en paramètre ($categoryId).
+
+    ```
+    $paginatedQuery = new PaginatedQuery(
+        "SELECT p.* 
+            FROM post p 
+            JOIN post_category pc ON pc.post_id = p.id
+            WHERE pc.category_id = {$categoryId}
+            ORDER BY created_at DESC", 
+        "SELECT COUNT(category_id) FROM post_category WHEREcategory_id = {$categoryId}"
+    );
+    ```
+
+3. On va créer une nouvelle méthode pour la partie qui se répéte dans les deux codes à partir de $postsById. Comme cette requête concerne les catégories on va la mettre dans la classe **CategoryTable**.
+
+    ```
+    /**
+     * @param App\Model\Post[] $posts
+     */
+    public function hydratePosts(array $posts): void
+    {
+         // On récupère l'id de chaque article
+         $postsById = [];
+         foreach ($posts as $post) {
+             // On passe l'id du post comme index du tableau $postsById
+             // et la valeur de cet index sera le post lui même
+             $postsById[$post->getId()] = $post;
+         }
+         // dd(array_keys($postsById));
+ 
+         $categories = $this->pdo
+             ->query('SELECT c.*, pc.post_id
+                 FROM post_category pc
+                 JOIN category c ON c.id = pc.category_id
+                 WHERE pc.post_id IN (' . implode(',', array_keys($postsById)) . ')'
+             )->fetchAll(PDO::FETCH_CLASS, Category::class);
+         // dump($categories);
+ 
+         // On parcourt les catégories
+         foreach ($categories as $category) {
+             // On trouve l'article $posts correspondant à la ligne
+             // On ajoute la catégorie à l'article
+             $postsById[$category->getPostId()]->addCategory($category);
+         }
+    }
+    ```
+
+4. Il nous suffit maintnant de faire appel à cette méthode dans les méthodes qui en ont besoin : findpaginated et findPaginatedForCategory.
+
+    On ajoute ce code à la palce de l'ancien :
+
+    ```
+    // On appelle la méthode hydratePosts()
+    (new CategoryTable($this->pdo))->hydratePosts($posts);
+    ```
+    
+5. La méthode est complète, on peut maintenant l'appeler dans show.php.
+
+    ```
+    [$posts, $paginatedQuery] = (new PostTable($pdo))->findPaginatedForCategory($category->getId());
+    ```
+
+6. On teste et ça marche!
+
+ 
+
 
 
     
