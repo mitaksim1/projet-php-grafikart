@@ -236,6 +236,32 @@ Je continue avec la correction, avant de continuer il nous a montré comment fai
 
 10. On teste en essayant de supprimer le premier article et ça marche, l'article est bien supprimé et on est bien redirigé vers le listing des articles.
 
+### ajout d'un message si article bien supprimé
+
+1. Pour que ce soit plus clair pour l'utilisateur on va afficher un message en cas de réussite.
+
+    - On commence par ajouter le paramètre suivant à l'url :
+
+    ```
+    header('Location: ' . $router->url('admin_posts') . '?delete=1');
+    ```
+
+2. Dans **views/admin/post/index.php** on crée le code :
+
+    ```
+    <?php if (isset($_GET['delete'])): ?>
+        <div class="alert alert-success">
+            L'article a bien été supprimé
+        </div>
+    <?php endif ?>
+    ```
+
+3. Pour pouvoir tester sans supprimer vraiment l'article (pour ne pas vider notre bdd) on commente l'appel à la méthode delete() dans delete.php.
+
+    On teste et il y a bien lme message qui apparaît.
+
+4. 
+
 
 
 

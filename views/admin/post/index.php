@@ -13,6 +13,13 @@ $link = $router->url('admin_posts');
 ?>
 <h1>Admin</h1>
 
+<!-- Message à envoyer en cas d'article bien supprimé -->
+<?php if (isset($_GET['delete'])): ?>
+    <div class="alert alert-success">
+        L'article a bien été supprimé
+    </div>
+<?php endif ?>
+
 <table class="table">
   <thead>
     <tr>
