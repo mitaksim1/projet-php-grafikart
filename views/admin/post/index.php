@@ -32,6 +32,10 @@ $link = $router->url('admin_posts');
         <a href="<?= $router->url('admin_post', ['id' => $post->getId()]) ?>" class="btn btn-primary">
         Editer
         </a>
+        <a href="<?= $router->url('admin_post', ['id' => $post->getId()]) ?>" class="btn btn-danger"
+        onclick="return confirm('Voulez vous vraiment effectuer cette action ?')")>
+        Supprimer
+        </a>
     </td>
     </tr>
     <?php endforeach ?>

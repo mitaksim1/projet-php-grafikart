@@ -121,6 +121,28 @@ Je continue avec la correction, avant de continuer il nous a montré comment fai
 
     - Pour indiquer que c'est un bouton on ajoute la classe *btn btn-primary*.
 
+7. Il va nous falloir un bouton *Suppriler* aussi, pour l'instant on récupère le même code qui on viendra à changer après.
+
+    ```
+    <a href="<?= $router->url('admin_post', ['id' => $post->getId()]) ?>" class="btn btn-danger">
+        Supprimer
+    </a>
+    ```
+
+8. Si on veut envoyer un message de confirmation au cas où l'utilisateur clique sur le bouton *Supprimer** par erreur, on peut ajouter un peu de Javascript comme suit :
+
+    ```
+    <a href="<?= $router->url('admin_post', ['id' => $post->getId()]) ?>" class="btn btn-danger"
+    onclick="return confirm('Voulez vous vraiment effectuer cette action ?')")>
+        Supprimer
+    </a>
+    ```
+
+    On teste et il y a bien l'alert qui apparaît nous demandant la confirmation. Si clique sur *Annuler* on reste sur la page et si on clique sur *Ok* on est redirigé vers la page qui nous permettra de supprimer l'article.
+
+
+
+
 
 
 
