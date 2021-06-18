@@ -24,7 +24,7 @@ abstract class Table {
         $this->pdo = $pdo;
     }
 
-    public function find(int $id): Post
+    public function find(int $id)
     {
         // Comme on va recevoir des paramètres envoyés par l'utilisateur on fait une rquête préparé
         $query = $this->pdo->prepare('SELECT * FROM ' . $this->table . ' WHERE id = :id');
