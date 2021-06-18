@@ -5,7 +5,7 @@ use App\Model\Category;
 use App\Table\Exceptions\NotFoundException;
 use PDO;
 
-class CategoryTable extends Table {
+final class CategoryTable extends Table {
 
     protected $table = "category";
     protected $class = Category::class;

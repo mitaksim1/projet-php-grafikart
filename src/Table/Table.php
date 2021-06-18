@@ -5,7 +5,7 @@ use App\Model\Post;
 use App\Table\Exceptions\NotFoundException;
 use PDO;
 
-class Table {
+abstract class Table {
 
     protected $pdo;
 

@@ -480,6 +480,24 @@ La méthode find de PostTable et CategoryTable est presque identique, la seule c
     ```
     ->fetchAll(PDO::FETCH_CLASS, $this->class);
     ```
+### La classe Table
+
+Quand une classe n'a pas vocation à être utilisée telle quelle, on peut la marquer comme étant une classe **abstraite**.
+
+Ca revient un peu à dire que cette classe est une classe modèle, elle ne va servir que pour les enfants qui en héritent.
+
+Si on tente de l'instancier on va avoir une erreur.
+
+```
+abstract class Table
+```
+
+Quand on sait qu'une classe ne vas pas être héritée par une autre, on peut la déclarer comme étant une classe **final**.
+
+```
+final class PostTable extends Table...
+final class CategoryTable extends Table...
+```
 
 
 

@@ -7,7 +7,7 @@ use App\PaginatedQuery;
 use App\Table\Exceptions\NotFoundException;
 use PDO;
 
-class PostTable extends Table {
+final class PostTable extends Table {
 
     protected $table = "post";
     protected $class = Post::class;
