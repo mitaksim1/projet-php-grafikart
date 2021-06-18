@@ -23,7 +23,16 @@ $link = $router->url('admin_posts');
   <tbody>
     <tr>
     <?php foreach ($posts as $post) : ?>
-      <th scope="row"><a href="<?= $router->url('form') ?>"><?= e($post->getName()) ?></a></th>
+      <td scope="row">
+        <a href="<?= $router->url('admin_post', ['id' => $post->getId()]) ?>">
+        <?= e($post->getName()) ?>
+        </a>
+    </td>
+      <td scope="row">
+        <a href="<?= $router->url('admin_post', ['id' => $post->getId()]) ?>" class="btn btn-primary">
+        Editer
+        </a>
+    </td>
     </tr>
     <?php endforeach ?>
     </tbody>

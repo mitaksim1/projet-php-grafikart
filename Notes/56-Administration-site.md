@@ -12,6 +12,8 @@ Je continue avec la correction, avant de continuer il nous a montré comment fai
 
 - Aller dans File->Preferences->Settings->Appearance->Workbench-> "chercher le titre Tree Indent, qui par défaut est à 8, nous on l'a mis à 15.
 
+### Création nouvelle route pour la page admin et affichage des titres des articles dans un tableau
+
 1. On commence par créer la nouvelle route dans **public/index.php**.
 
     ```
@@ -72,7 +74,54 @@ Je continue avec la correction, avant de continuer il nous a montré comment fai
     $link = $router->url('admin_posts');
     ```
 
-7. 
+### Création d'une nouvelle route pour créer et modifier un article
+
+1. On commence par créer la route que va nous permettre de modifier un article selon son id.
+
+    ```
+    ->get('/admin/post/[i:id]', 'admin/post/edit', 'admin_post')
+    ```
+
+2. On crée aussi la route qui nous permettra de créer un nouvel article.
+
+    ```
+    ->get('/admin/post/new', 'admin/post/new', 'admin_post_new')
+    ```
+
+3. On va entourer les titres dans une balise "a" pour créer le lien qui va nous permettre d'éditer l'article.
+
+    ```
+    <?php foreach ($posts as $post) : ?>
+      <td scope="row"><a href="<?= $router->url('admin_post', ['id' => $post->getId()]) ?>"><?= e($post->getName()) ?></a></td>
+    </tr>
+    <?php endforeach ?>
+    ```
+
+4. La route *admin_post* va nous mèner à la vue **admin/post/edit**, on va alors la créer.
+
+    ```
+    <h1>Editer l'article <?= $params['id'] ?></h1>
+    ```
+
+5. On profite pour créer aussi la vue **admin/post/new**.
+
+    ```
+    <h1>Créer un nouvel article</h1>
+    ```
+
+6. On va créer un bouton qui nous permettra d'éditer l'article, ce sera le même code de plus haut.
+
+    ```
+    <td scope="row">
+        <a href="<?= $router->url('admin_post', ['id' => $post->getId()]) ?>" class="btn btn-primary">
+        Editer
+        </a>
+    </td>
+    ```
+
+    - Pour indiquer que c'est un bouton on ajoute la classe *btn btn-primary*.
+
+
 
 
     
