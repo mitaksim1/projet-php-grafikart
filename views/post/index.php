@@ -11,9 +11,7 @@ $title = 'Mon Blog';
 $pdo = Connection::getPDO();
 
 $table = new PostTable($pdo);
-$var = $table->findPaginated();
-$posts = $var[0];
-$pagination = $var[1];
+[$posts, $pagination] = $table->findPaginated();
 
 $link = $router->url('home');
 ?>

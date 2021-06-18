@@ -1,9 +1,6 @@
 <?php
 
-use PDO;
-use Exception;
 use App\Connection;
-use App\Model\{Post, Category};
 use App\Table\CategoryTable;
 use App\Table\PostTable;
 

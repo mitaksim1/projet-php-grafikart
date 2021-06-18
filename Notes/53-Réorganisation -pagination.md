@@ -272,7 +272,7 @@ HTML;
     </div>
     ```
 
-2. Essayer de créer une condition pour que l'appel à getItem() ne soit pas possible di déjàa appelé.
+2. Essayer de créer une condition pour que l'appel à getItem() ne soit pas possible di déjà appelé.
 
     - On commence par cdréer une nouvelle propriété qui va garder les items.
 

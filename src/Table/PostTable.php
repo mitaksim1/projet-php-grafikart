@@ -1,18 +1,15 @@
 <?php
 namespace App\Table;
 
-use App\Model\Category;
 use App\Model\Post;
 use App\PaginatedQuery;
-use App\Table\Exceptions\NotFoundException;
-use PDO;
 
 final class PostTable extends Table {
 
     protected $table = "post";
     protected $class = Post::class;
 
-    public function findpaginated()
+    public function findPaginated()
     {
         $paginatedQuery = new PaginatedQuery(
             // Premier requête liste les articles

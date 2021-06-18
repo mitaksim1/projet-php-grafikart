@@ -2,7 +2,6 @@
 namespace App\Table;
 
 use App\Model\Category;
-use App\Table\Exceptions\NotFoundException;
 use PDO;
 
 final class CategoryTable extends Table {

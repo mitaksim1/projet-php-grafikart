@@ -259,7 +259,7 @@ Dans ce chapitre on veut afficher la liste des catégories dans le listing des a
     </div>
     ```
 
-### simplification du code avec array_map
+### Simplification du code avec array_map
 
 https://www.php.net/manual/fr/function.array-map.php
 
