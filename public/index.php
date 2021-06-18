@@ -31,7 +31,8 @@ if (isset($_GET['page']) && $_GET['page'] === '1') {
 
 $router = new Router(dirname(__DIR__) . '/views');
 $router->get('/', 'post/index', 'home')
-        ->get('/admin', 'admin/show', 'admin')
+        ->get('/admin', 'admin/post/index', 'admin_posts')
+        ->get('/admin/form', 'admin/form', 'form')
         ->get('/blog/category/[*:slug]-[i:id]', 'category/show', 'category')
         ->get('/blog/[*:slug]-[i:id]', 'post/show', 'post')
         ->run();
