@@ -140,6 +140,105 @@ Je continue avec la correction, avant de continuer il nous a montré comment fai
 
     On teste et il y a bien l'alert qui apparaît nous demandant la confirmation. Si clique sur *Annuler* on reste sur la page et si on clique sur *Ok* on est redirigé vers la page qui nous permettra de supprimer l'article.
 
+### Suppression d'un article
+
+1. Bien sûr, qu'il va nous falloir une url différente. On va créer une url qui ressemble à celle pour modifier un article, sauf qu'on mettra un delete à la fin.
+
+    ```
+    ->get('/admin/post/[i:id]/delete', 'admin/post/delete', 'admin_post_delete')
+    ```
+
+2. On va créer la vue qui correspond.
+
+    ```
+    <h1>Suppression de <?= $params['id'] ?></h1>
+    ```
+
+3. On n'oublie pas de changer l'url dans le lien crée vers ce nouveau fichier.
+
+    ```
+    <a href="<?= $router->url('admin_post_delete', ['id' => $post->getId()]) ?>" class="btn btn-danger"
+    onclick="return confirm('Voulez vous vraiment effectuer cette action ?')")>
+        Supprimer
+    </a>
+    ```
+
+4. On teste et on est bien redirigé vers la page créée.
+
+5. On va maintenant créer le code pour la suprression d'un article.
+
+    - On commence par instancier PDO.
+
+    - On instancie la classe PostTable, où on va créer la méthode delete(), on passera comme paramètre à cette méthode l'id de l'article à supprimer.
+
+    - Une fois que la suppression est finalisée on redirige l'utilisateur vers la page de listing des articles.
+
+    ```
+    <?php
+
+    use App\Connection;
+    use App\Table\PostTable;
+
+    $pdo = Connection::getPDO();
+    $table = new PostTable($pdo);
+    $table->delete($params['id']);
+    header('Location: ' .$router->url('admin_posts'));
+    ?>
+
+    <h1>Suppression de <?= $params['id'] ?></h1>
+    ```
+
+6. On va créer la méthode **delete()** dans la classe PostTable.
+
+    ```
+    public function delete(int $id)
+    {
+        $query = $this->pdo->prepare("DELETE FROM {$this->table} WHERE id = ?");
+        $query->execute([$id]);
+    }
+    ```
+
+7. On profite pour remplacer l'appel à la table *post* (écrit en dur comme ça) par *$this->table* dans les autres méthodes qussi, ainsi si un jour on décide de changer le nom de cette table il nous suffira de la changer dans la variable.
+
+8. Cette requête nous retourne true ou false, on pourrait la typer comme étant un boolean, mais c'est mieux de gérer une exception en cas d'erreur.
+
+    ```
+    public function delete(int $id)
+    {
+        $query = $this->pdo->prepare("DELETE FROM {$this->table} WHERE id = ?");
+        
+        $queryExecuted = $query->execute([$id]);
+        
+        if ($queryExecuted === false) {
+            throw new \Exception("Impossible de supprimer l'enregistrement $id dans la table {$this->table}");
+        }
+    }
+    ```
+
+    On aura pas besoin d'un return, parce que si c'est bien passé, ça va nous retourner true. si c'est mal apssé ça va tomber dans l'exception.
+
+9. Avant de tester si ça marche et pour mieux visualiser les articles, on va ajouter leursb
+    - On commence par ajouter une nouvelle colonne dans les en-têtes du tableau : 
+
+    ```
+     <tr>
+        <th>#id</th>
+        <th scope="col">Titre</th>
+        <th scope="col">Actions</th>
+    </tr>
+    ```
+
+    - On ajoute une nouvelle ligne dans le tableau avec l'appel aux id's de articles :
+
+    ```
+    <td>#<?= $post->getId() ?></td>
+    ```
+
+10. On teste en essayant de supprimer le premier article et ça marche, l'article est bien supprimé et on est bien redirigé vers le listing des articles.
+
+
+
+
 
 
 

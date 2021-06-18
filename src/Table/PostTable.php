@@ -9,13 +9,25 @@ final class PostTable extends Table {
     protected $table = "post";
     protected $class = Post::class;
 
+    public function delete(int $id)
+    {
+        // Récupère l'article dont l'id est demandée
+        $query = $this->pdo->prepare("DELETE FROM {$this->table} WHERE id = ?");
+        // Exécute la requête qui nous retourne true/false
+        $queryExecuted = $query->execute([$id]);
+        // Condition si requête bien exécutée
+        if ($queryExecuted === false) {
+            throw new \Exception("Impossible de supprimer l'enregistrement $id dans la table {$this->table}");
+        }
+    }
+
     public function findPaginated()
     {
         $paginatedQuery = new PaginatedQuery(
             // Premier requête liste les articles
-            "SELECT * FROM post ORDER BY created_at DESC",
+            "SELECT * FROM {$this->table} ORDER BY created_at DESC",
             // Deuxième requête récupères le nombre d'articles total
-            "SELECT COUNT(id) FROM post",
+            "SELECT COUNT(id) FROM {$this->table}",
             $this->pdo
         );
         
@@ -32,7 +44,7 @@ final class PostTable extends Table {
     {
         $paginatedQuery = new PaginatedQuery(
             "SELECT p.* 
-                FROM post p 
+                FROM {$this->table} p 
                 JOIN post_category pc ON pc.post_id = p.id
                 WHERE pc.category_id = {$categoryId}
                 ORDER BY created_at DESC", 

@@ -16,23 +16,25 @@ $link = $router->url('admin_posts');
 <table class="table">
   <thead>
     <tr>
-      <th scope="col">Titre</th>
-      <th scope="col">Actions</th>
+        <th>#id</th>
+        <th scope="col">Titre</th>
+        <th scope="col">Actions</th>
     </tr>
   </thead>
   <tbody>
-    <tr>
     <?php foreach ($posts as $post) : ?>
-      <td scope="row">
-        <a href="<?= $router->url('admin_post', ['id' => $post->getId()]) ?>">
-        <?= e($post->getName()) ?>
-        </a>
+    <tr>
+        <td>#<?= $post->getId() ?></td>
+        <td scope="row">
+            <a href="<?= $router->url('admin_post', ['id' => $post->getId()]) ?>">
+            <?= e($post->getName()) ?>
+            </a>
     </td>
       <td scope="row">
         <a href="<?= $router->url('admin_post', ['id' => $post->getId()]) ?>" class="btn btn-primary">
         Editer
         </a>
-        <a href="<?= $router->url('admin_post', ['id' => $post->getId()]) ?>" class="btn btn-danger"
+        <a href="<?= $router->url('admin_post_delete', ['id' => $post->getId()]) ?>" class="btn btn-danger"
         onclick="return confirm('Voulez vous vraiment effectuer cette action ?')")>
         Supprimer
         </a>
