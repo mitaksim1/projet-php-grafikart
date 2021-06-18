@@ -3,13 +3,7 @@
 <?php
 // Pour afficher le titre de la page
 
-use PDO;
-use App\URL;
 use App\Connection;
-use App\Model\Post;
-use App\Helpers\Text;
-use App\Model\Category;
-use App\PaginatedQuery;
 use App\Table\PostTable;
 
 $title = 'Mon Blog';

@@ -3,27 +3,15 @@
 use App\Connection;
 use App\Model\{Category, Post};
 use App\PaginatedQuery;
+use App\Table\CategoryTable;
 
 $id = (int)$params['id'];
 $slug = $params['slug'];
 
 // Requête pour récupérer un article selon so ID
 $pdo = Connection::getPDO();
-// Comme on va recevoir des paramètres envoyés par l'utilisateur on fait une rquête préparé
-$query = $pdo->prepare('SELECT * FROM category WHERE id = :id');
-// On précise que l'id correspondra à l'id envoyé par l'utilisateur
-$query->execute(['id' => $id]);
-$query->setFetchMode(PDO::FETCH_CLASS, Category::class);
-/**
- * On peut typer cette variable comme suit :
- * @var Category|false
- */
-$category = $query->fetch();
-// dd($category);
-
-if ($category === false) {
-    throw new Exception('Aucune catégorie ne correspond à cet ID');
-}
+$categoryTable = new CategoryTable($pdo);
+$category = $categoryTable->find($id);
 
 if ($category->getSlug() !== $slug) {
     // 'category' : nom donné lors de la création de la route
