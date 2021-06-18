@@ -367,6 +367,49 @@ En peut plus bas dans le code on avait la requête qui s'occupait de récupérer
 
 6. On teste et ça marche!
 
+### Factorisation du code qui affiche un article
+
+1. Dans **views/post/show.php** on a une requête qui ne récupère qu'un post, c'est le même cas qu'on vait traité pour les catégories. 
+
+    On va donc, récupèrer le code find() et l'adapter.
+
+    ```
+    public function find(int $id): Post
+    {
+        $query = $this->pdo->prepare('SELECT * FROM post WHERE id = :id');
+        
+        $query->execute(['id' => $id]);
+
+        $query->setFetchMode(PDO::FETCH_CLASS, Post::class);
+
+        $result = $query->fetch();
+
+        if ($result === false) {
+            throw new NotFoundException('post', $id);
+        }
+        return $result;
+    }
+    ```
+
+2. Dans *show.php* on a qu'à appeler cette méthode :
+
+    ```
+    $post = (new PostTable($pdo))->find($id);
+    ```
+
+3. Plus bas dans le fichier on affiche les catégories pour ce post, alors on n'a qu'à appeler la méthode *hydratePosts*.
+
+    ```
+    (new CategoryTable($pdo))->hydratePosts([$post]);
+    ```
+
+4. Maintenant que l'on a changé le code il faut changer l'appel dans le code html.
+
+    ```
+    <?php foreach ($post->getCategories() as $key => $category): 
+    ```
+
+5. On teste et ça marche toujours.
  
 
 
