@@ -7,19 +7,8 @@ use PDO;
 
 class CategoryTable extends Table {
 
-   public function find(int $id): Category
-   {
-        // Comme on va recevoir des paramètres envoyés par l'utilisateur on fait une rquête préparé
-        $query = $this->pdo->prepare('SELECT * FROM category WHERE id = :id');
-        // On précise que l'id correspondra à l'id envoyé par l'utilisateur
-        $query->execute(['id' => $id]);
-        $query->setFetchMode(PDO::FETCH_CLASS, Category::class);
-        $result = $query->fetch();
-        if ($result === false) {
-            throw new NotFoundException('category', $id);
-        }
-        return $result;
-    }
+    protected $table = "category";
+    protected $class = Category::class;
 
     // Rentre dans les articles la catégorie associée
     /**
@@ -41,7 +30,7 @@ class CategoryTable extends Table {
                  FROM post_category pc
                  JOIN category c ON c.id = pc.category_id
                  WHERE pc.post_id IN (' . implode(',', array_keys($postsById)) . ')'
-             )->fetchAll(PDO::FETCH_CLASS, Category::class);
+             )->fetchAll(PDO::FETCH_CLASS, $this->class);
          // dump($categories);
  
          // On parcourt les catégories

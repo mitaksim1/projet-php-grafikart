@@ -410,7 +410,78 @@ En peut plus bas dans le code on avait la requête qui s'occupait de récupérer
     ```
 
 5. On teste et ça marche toujours.
- 
+
+### Factorisation de la méthode find
+
+La méthode find de PostTable et CategoryTable est presque identique, la seule chose qui change c'est le nom de la table où faire la requête.
+
+1. On va alors, passer la méthode find dans le fichier Table.php et on fera les adaptations nécéssaires.
+
+    - Comme on a besoin de changer les données selon la classe où on appelera la méthode, opn va créer des propriétés qui iront stocker ces informations.
+
+    ```
+    protected $table = null;
+
+    protected $class = null;
+    ```
+
+    - On dynamisera l'appel à ces variables dans la méthode.
+
+    ```
+    public function find(int $id): Post
+    {
+        
+        $query = $this->pdo->prepare('SELECT * FROM ' . $this->table . ' WHERE id = :id');
+       
+        $query->execute(['id' => $id]);
+
+        $query->setFetchMode(PDO::FETCH_CLASS, $this->class);
+
+        $result = $query->fetch();
+
+        if ($result === false) {
+            throw new NotFoundException($this->table, $id);
+        }
+
+        return $result;
+    }
+    ```
+
+2. Les propriétes créées dans la classe table.php pourront être appelées dans les classes qui font appel à la méthode find.
+
+    ```
+    protected $table = "post";
+    protected $class = Post::class;
+    ```
+
+    - En appelant ces variables, la méthode find qui est hérité de la classe parente prendra ses valeurs "automatiquement", on pourra donc appeler l'appel à la méthode dans PostTable et CategoryTable.
+
+3. Avant de faire la même chose dans la classe CategoryTable, le mec a voulu nous montrer un cas d'erreur si aucune table n'était pas renseigné.
+
+    Moi, j'ai pas eu d'erreur, mais chez lui ça donnait une erreur concernant la requête, le message n'était pas très explicite alors il a crée une condition dans le construct de la classe table :
+
+    ```
+    public function __construct(\PDO $pdo)
+    {
+        if ($this->table === null) {
+            throw new \Exception("La classe " . get_class($this) . " n'a pas de propriété \$table");
+        }
+        if ($this->table === null) {
+            throw new \Exception("La classe " . get_class($this) . " n'a pas de propriété \$class");
+        }
+        $this->pdo = $pdo;
+    }
+    ```
+
+    Maintenat, si je re teste j'ai bien une erreur me disant qu'aucune table n'a été renseignée.
+
+4. J'appelle les bonnes données, je change l'appel à la classe au moment de faire le fetchAll et ça re marche!
+
+    ```
+    ->fetchAll(PDO::FETCH_CLASS, $this->class);
+    ```
+
+
 
 
 
