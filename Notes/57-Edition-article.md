@@ -175,6 +175,87 @@ On va pas créer la logique dans la vue, c'est pas une bonne méthode, on va la 
     <?php endif ?>
     ```
 
+### Validation des données
+
+On a pas encore géré la validation des données, pour l'instant si l'utilisateur clique sur le bouton "Modifier" il n'y aura pas des erreurs.
+
+On pourrait mettre juste la propriété **required** dans l'input du formulaire, mais ça c'est juste une sécurité du côté frontend. Une personne mal intentionné pourrait inspecter le code, l'effacer manuellement et ainsi envoyer le formulaire vide ou avec des données indésirables.
+
+1. La façon la plus simple de gérer ça côté backend, c'est de créer une variable **$errors = []** qui contiendrait tous les erreurs de validation.
+
+2. Ensuite dans la condition que l'on avait crée, on créerai une autre que vavvérifier si le champs est vide avant d'accepter la modif.
+
+    ```
+    if (!empty($_POST)) {
+        if (empty($_POST['name'])) {
+            $errors['name'][] = 'Le champs titre ne peut pas être vide';
+        }
+        if (mb_strlen($_POST['name']) <= 10) {
+            $errors['name'][] = 'Le champs titre doit contenir plus de 10 caractères';
+        }
+        dd($errors);
+        ...
+    }
+    ```
+
+    **[]** : on peut rajouter d'autres données dans la même clé dans un tableau en le mettant à côté comme ça.
+
+3. On teste avec le **dd** en soumettant le formulaire vide et on retrouve bien dans le dump un tableau avec les deux erreurs.
+
+4. Maintenant, il faut que les modifications ne soient faites que si il n'y a pas des erreurs dans le tableau $errors.
+
+    ```
+    if (empty($errors)) {
+
+        $postTable->update($post);
+       
+        $success = true;
+    }
+    ```
+
+5. Dans le code html on va aussi mettre un autre message.
+
+    ```
+    <?php if (!empty($errors)): ?>
+        <div class="alert alert-danger">
+            L'article n'a pas pu être modifié, merci de corriger vos erreurs
+        </div>
+    <?php endif ?>
+    ```
+
+6. Le message n'est pas clair pour l'utilisateur, parce qu'il peut ne pas savoir où il s'est trompé, alors avec Boostratp on peut utiliser la classe **invalid-feedback** avec le message explicitant l'erreur. Cette classe ne marche si on ajoute la classe **is-valid** dans l'input concerné par le feedback.
+
+    ```
+    <input type="text" class="form-control is-invalid" name="name" value="<?= e($post->getName()) ?>">
+    <div class="invalid-feedback">
+        Lorem ipsum dolor, sit amet consectetur adipisicing elit. Fugit, aperiam.
+    </div>
+    ```
+
+8. Pour que le message n'apparaîsse que si il y a une erreur on va créer une condition dans l'input pour gérér la classe **is-valid**.
+
+    ```
+    <input type="text" class="form-control <?= isset($errors['name']) ? "is-invalid" : ""?>"
+    ```
+
+9. On affiche le vrai message :
+
+    ```
+    <?php if (isset($errors['name'])): ?>
+        <div class="invalid-feedback">
+            <?= implode('<br>', $errors['name']) ?>
+        </div>
+    <?php endif ?>
+    ```
+
+10. On teste, en enlèvant le *required* dans l'inspecteur et maintenant on ne peut plus envoyer le formulaire vide, les messages que l'on a configuré apparaîssent bien.
+
+
+
+
+
+
+
 
 
 

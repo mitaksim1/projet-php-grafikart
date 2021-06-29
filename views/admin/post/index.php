@@ -39,9 +39,9 @@ $link = $router->url('admin_posts');
             <a href="<?= $router->url('admin_post', ['id' => $post->getId()]) ?>">
             <?= e($post->getName()) ?>
             </a>
-    </td>
-      <td scope="row">
-        <a action="<?= $router->url('admin_post', ['id' => $post->getId()]) ?>" class="btn btn-primary">
+        </td>
+        <td scope="row">
+        <a href="<?= $router->url('admin_post', ['id' => $post->getId()]) ?>" class="btn btn-primary">
         Editer
         </a>
         <form action="<?= $router->url('admin_post_delete', ['id' => $post->getId()]) ?>" method="POST" 
