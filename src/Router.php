@@ -34,12 +34,22 @@ class Router {
         return $this;
     }
 
+    // méthode qui va nous permettre de gérer le bouton Supprimer
     public function post(string $url, string $view, ?string $name = null): self
+    {
+        $this->router->map('POST|GET', $url, $view, $name);
+        // Méthode fluent permet de retourner la classe elle même et ainsi enchaîber les méthodes
+        return $this;
+    }
+
+    // Méthode qui va nous permettre de gérer le bouton Editer
+    public function match(string $url, string $view, ?string $name = null): self
     {
         $this->router->map('POST', $url, $view, $name);
         // Méthode fluent permet de retourner la classe elle même et ainsi enchaîber les méthodes
         return $this;
     }
+
 
     // Méthode qui va gérer les routes, elle prendra en paramètre le nom de la route et un array avec les paramètres pour cette route
     public function url(string $name, array $params = [])
