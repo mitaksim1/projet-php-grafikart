@@ -303,6 +303,58 @@ On mettra un système d'authentification qui nous permettra d'ajouter des param�
 
     Ici, c'est juste un exemple, plus tard on mettra un système avec des sessions, plus complet.
 
+### Lien du bouton Supprimer
+
+Pour éviter qu'un utilisateur mal intentionné utilise le lien du bouton "Supprimer" ailleurs dans le code en faisant qu'un post soit supprimé à notre gré, on va faire en sorte que la suppression soit envoyé en POST.
+
+Au niveau du routeur, on va devoir générer les url's en post.
+
+1. Dans le fichier **Router.php** on va C/C le méthode get() auquelle on renommera post().
+
+    ```
+    public function post(string $url, string $view, ?string $name = null): self
+    {
+        $this->router->map('POST', $url, $view, $name);
+        // Méthode fluent permet de retourner la classe elle même et ainsi enchaîber les méthodes
+        return $this;
+    }
+    ```
+
+2. Dans le fichier **public/index.php**, on va changer la méthode de la route de get à post.
+
+    ```
+    ->post('/admin/post/[i:id]/delete', 'admin/post/delete', 'admin_post_delete')
+    ```
+
+3. Maintenant la seule façon d'accéder à cette route c'est en postant un formulaire.
+
+    On va donc transformer le lien dans un simple formulaire.
+
+    ```
+    <form action="<?= $router->url('admin_post_delete', ['id' => $post->getId()]) ?>" method="POST" 
+        onsubmit="return confirm('Voulez vous vraiment effectuer cette action ?')")>
+        <button type="submit" class="btn btn-danger">Supprimer</button>
+    </form>
+    ```
+
+4. Dans le layout on voit que la mise en page des boutons s'est cassé, on va voir ça après, mais sinon ça marche. quand on clique sur le bouton on est bien redirigé vers la route *http://localhost:8000/admin?delete=1*.
+
+5. Si on fait un **dd**, on voit que juste quand on clique sur le bouton on est dirigé vers la route de suppression : *http://localhost:8000/admin/post/8/delete*, ainsi personne ne pourra copier le lien avec des mauvaises intentions.
+
+    ```
+    $pdo = Connection::getPDO();
+    $table = new PostTable($pdo);
+    dd($params['id']);
+    ```
+
+6. Pour remettre la mise en page on va mettre directement dans le code html :
+
+    ```
+    style="display:inline"
+    ```
+
+    
+
     
 
 
