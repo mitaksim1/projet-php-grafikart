@@ -4,7 +4,7 @@ L'idée c'est que quand on tape */admin* on soit redirigé vers la page d'admini
 
 Cette page sera une page toute simple qui va lister les articles sous forme d'un tableau.
 
-Sur une colonne on aura le titre de l'article et quand on cliquera dessus ça va nous diriger vers le formulaire d'addition.
+Sur une colonne on aura le titre de l'article et quand on cliquera dessus ça va nous diriger vers le formulaire d'ajout.
 
 Le mec nous a laissé cette partie comme challenge, j'ai réussi à aller jusqu'à la page form, mais je n'ai pas crée le formulaire.
 
@@ -260,7 +260,50 @@ Je continue avec la correction, avant de continuer il nous a montré comment fai
 
     On teste et il y a bien lme message qui apparaît.
 
-4. 
+### Sécurisation de la page admin
+
+On va pas la faire tout de suite, mais on va créer la structure pour sécuriser cette page plus tard.
+
+On mettra un système d'authentification qui nous permettra d'ajouter des paramètres à l'url comme par exemple *admin?admin=1* pour vérifier que l'utilisateur est bien connecté.
+
+1. Dans le dossier **src**, on va créer un fichier **Auth.php**.
+
+    ```
+    <?php
+    namespace App;
+
+    class Auth {
+        /**
+         * Vérifie si l'utilisateur est bien connecté
+         */
+        public static function check() {
+            // TODO : Ecrire le code
+        }
+    }
+    ```
+
+2. Dans les fichiers *views/admin/post/delete.php* et *views/admin/post/index.php*, on appelle cette méthode :
+
+    ```
+    Auth::check();
+    ```
+
+3. On ferait quelque chose comme ceci :
+
+    ```
+    public static function check() {
+        if (!isset($_GET['admin'])) {
+            throw new Exception('Accès interdit');
+        }
+        // TODO : Ecrire le code
+    }
+    ```
+
+    - On vérifie si le paramètre est bien set, si oui on continue le code normalement. Si non, on envoi une exception avec le message accès interdit.
+
+    Ici, c'est juste un exemple, plus tard on mettra un système avec des sessions, plus complet.
+
+    
 
 
 
