@@ -148,3 +148,39 @@ HTML;
 
 4. On teste et ça marche.
 
+### Le textarea pour le contenu
+
+1. On C/C le code de la méthode **input** en changeant les données nécéssaires : 
+
+    ```
+    public function textarea(string $key, string $label): string
+    {
+        $value = $this->getValue($key);
+        $inputClass = 'form-control';
+        $invalidFeedback = '';
+        if (isset($this->errors[$key])) {
+            $inputClass .= ' is-invalid';
+            $invalidFeedback = '<div class="invalid-feedback">' . implode('<br>', $this->errors[$key]) . '</div>';
+        }
+        return <<<HTML
+            <div class="form-group">
+                <label for="field{$key}">{$label}</label>
+                <textarea type="text" id="field{$key}" class="{$inputClass}" name="{$key}" required>{$value}"</textarea>
+                {$invalidFeedback}
+            </div>
+HTML;
+    }
+    ```
+
+2. Si on teste comme ça, on a un message d'erreur : *Call to undefined method App\Model\Post::getContent()* , parce que dans notre classe **Post** on n'avait pas crée un gettre pour $content. On va donc, le créer.
+
+    Dans **Model/Post.php** :
+
+    ```
+    public function getContent(): ?string
+    {
+        return $this->content;
+    }
+    ```
+
+3. On re teste et maintenant on a bien le textarea avec le contenu à l'intérieur.
