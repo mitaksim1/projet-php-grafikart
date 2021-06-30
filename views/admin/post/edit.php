@@ -32,7 +32,10 @@ if (!empty($_POST)) {
         $errors = $validator->errors();
     }
 }
-$form = new Form($post, $errors);
+$form = new Form([
+    "name" => "teste",
+    "slug" => "teste 2"
+], $errors);
 ?>
 
 <!-- Message si modification réussie -->

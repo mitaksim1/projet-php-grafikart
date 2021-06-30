@@ -87,3 +87,28 @@ HTML;
 
 5. On teste.
 
+6. On va gérer le cas où la donnée envoyé au construct soit un tableau.
+
+    Dans ce cas, ce sera intéressant de créer une méthode privé que va récupérer les clés de tableau, si il n'y a rien retourner null.
+
+    Si c'est pas un tableau utiliser la logique que l'on avait crée dans la méthode input().
+
+    ```
+    private function getValue(string $key)
+    {
+        // Si donnée passée en paramètre est un tableau
+        if (is_array($this->data)) {
+            // retourner la clé de ce tableau
+            return $this->data[$key] ?? null;
+        }
+        $method = 'get' . ucfirst($key);
+        // dd($method);
+        $value = $this->data->$method();
+    }
+    ```
+
+7. Maintenant, dans la méthode input(), on a qu'à appeler cette méthode.
+
+    ```
+    $value = $this->getValue($key);
+    ```

@@ -14,9 +14,7 @@ class Form {
 
     public function input(string $key, string $label): string
     {
-        $method = 'get' . ucfirst($key);
-        // dd($method);
-        $value = $this->data->$method();
+        $value = $this->getValue($key);
         return <<<HTML
             <div class="form-group">
                 <label for="field{$key}">{$label}</label>
@@ -28,6 +26,19 @@ HTML;
     public function textarea(string $name, string $label): string
     {
         return '';
+    }
+
+    private function getValue(string $key)
+    {
+        // Si donnée passée en paramètre est un tableau
+        if (is_array($this->data)) {
+            // retourner la clé de ce tableau
+            return $this->data[$key];
+        }
+        // Dans le cas contraire, faire ce que suit 
+        $method = 'get' . ucfirst($key);
+        // dd($method);
+        return $this->data->$method();
     }
 }
 
