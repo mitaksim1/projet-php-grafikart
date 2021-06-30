@@ -327,7 +327,107 @@ On va donc sur Packagist et on essaie de trouver quelque chose qui correpsonde �
     $errors = $validator->errors();
     ```
 
-    On teste et maitenant on a bien le message sous l'input.
+    On teste et maintenant on a bien le message sous l'input.
+
+### Validation de la longueur du titre
+
+1. Dans la doc il y a toute la liste des règles disponibles, pour notre cas on va utiliser **lengthBetween**.
+
+    ```
+    $validator->rule('lengthBetween', 'name', 10, 200);
+    ```
+
+2. On n'aime pas trop le message qui est affiché, alors en regardant le code source on voit que la méthode qui le gére c'est protégée, alors on peut l'écraser.
+
+    On va donc, créer une classe pour pouvoir modifier les données qui nous ne correspondent pas.
+
+    - Dans **src** on crée la classe **Validator.php** :
+
+    ```
+    <?php
+    namespace App;
+
+    use Valitron\Validator as ValitronValidator;
+
+    class Validator extends ValitronValidator {
+
+    }
+    ```
+
+3. Ensuite on vient coller le code que l'on a récupéré dans le [code source](https://github.com/vlucas/valitron/blob/f7e662e3c0c1c465d548542672e08862fbb601d9/src/Valitron/Validator.php#L1464).
+
+    ```
+    protected function checkAndSetLabel($field, $message, $params)
+    {
+        if (isset($this->_labels[$field])) {
+            $message = str_replace('{field}', $this->_labels[$field], $message);
+
+            if (is_array($params)) {
+                $i = 1;
+                foreach ($params as $k => $v) {
+                    $tag = '{field' . $i . '}';
+                    $label = isset($params[$k]) && (is_numeric($params[$k]) || is_string($params[$k])) && isset($this->_labels[$params[$k]]) ? $this->_labels[$params[$k]] : $tag;
+                    $message = str_replace($tag, $label, $message);
+                    $i++;
+                }
+            }
+        } else {
+            $message = $this->prepend_labels
+                ? str_replace('{field}', ucwords(str_replace('_', ' ', $field)), $message)
+                : str_replace('{field} ', '', $message);
+        }
+
+        return $message;
+    }
+    ```
+
+7. Maintenant, que l'on extend de cette méthode on fera appel à notre classe, il faut changer le namespace du *use* dans **edit.php**.
+
+    ```
+    use App\Validator;
+    ```
+
+    On a plus besoin de préciser les noms pour les labels non plus, on peut donc effacer cette partie.
+
+    ```
+    if (!empty($_POST)) {
+        
+        Validator::lang('fr');
+        $validator = new Validator($_POST);
+        $validator->rule('required', 'name');   
+        $validator->rule('lengthBetween', 'name', 10, 200);
+
+        $post->setName($_POST['name']);
+
+        if ($validator->validate()) {
+
+            $postTable->update($post);
+            $success = true;
+        } else {
+
+            $errors = $validator->errors();
+        }
+    }
+    ```
+
+8. Dans **Validator.php** on a qu'à retourner les données que l'on souhaite changer, on peut effacer le reste du code.
+
+    ```
+    <?php
+    namespace App;
+
+    use Valitron\Validator as ValitronValidator;
+
+    class Validator extends ValitronValidator {
+
+        protected function checkAndSetLabel($field, $message, $params)
+        {   
+            return str_replace('{field} ', '', $message);   
+        }
+    }
+    ```
+
+    
 
 
 

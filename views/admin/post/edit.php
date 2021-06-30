@@ -2,7 +2,7 @@
 
 use App\Connection;
 use App\Table\PostTable;
-use Valitron\Validator;
+use App\Validator;
 
 $pdo = Connection::getPDO();
 $postTable = new PostTable($pdo);
@@ -17,13 +17,10 @@ if (!empty($_POST)) {
 
     $validator = new Validator($_POST);
 
-    // On change le nom des proriétés
-    $validator->labels(array(
-        'name' => 'Titre',
-        'content' => 'Contenu'
-    ));
-
+    // Valide l'existence du titre
     $validator->rule('required', 'name');
+    // valide la longueur du titre
+    $validator->rule('lengthBetween', 'name', 10, 200);
     $post->setName($_POST['name']);
 
     if ($validator->validate()) {
