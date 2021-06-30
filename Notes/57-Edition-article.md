@@ -250,6 +250,91 @@ On pourrait mettre juste la propriété **required** dans l'input du formulaire,
 
 10. On teste, en enlèvant le *required* dans l'inspecteur et maintenant on ne peut plus envoyer le formulaire vide, les messages que l'on a configuré apparaîssent bien.
 
+### Automatiser la validation
+
+Pour l'instant on n'a validé que les modifications du titre, mais on a aussi le contenu à vérifier et fururement on aura peut être d'autres données.
+
+Pour éviter de faire des conditiosn à l'infini on va essayer de trouver une librairie que fasse la validation d'une façon plus simple pour nous.
+
+On va donc sur Packagist et on essaie de trouver quelque chose qui correpsonde à nos besoins.
+
+1. On va installer la librairie **vlucas/valitron**, pour avoir la même version que le mec, on précise la version.
+
+    ```
+    composer require vlucas/valitron
+    ```
+
+2. On se refère à la doc pour savoir comment ça marche : https://github.com/vlucas/valitron.
+
+    Dans la condition que l'on avait crée on commence par instancier valitron, on lui passera comme paramètre le tableau contenu dans $_POST :
+
+    ```
+    $validator = new Validator($_POST);
+    ```
+
+3. Ensuite on appelle la méthode **rule()** qui va vérifier ce qu'on veut valider, elle prendra comme paramètre la règle à appliquer et le champs du tableau qu'on souhaite vérifier.
+
+    ```
+    if (!empty($_POST)) {
+        $validator = new Validator($_POST);
+        $validator->rule('required', 'name');
+        $post->setName($_POST['name']);
+
+        if ($validator->validate()) {
+            $postTable->update($post);
+            // Si pas d'erreur lors de la requête
+            $success = true;
+        } else {
+            dd($validator->errors());
+        }
+    }
+    ```
+
+4. On teste, en enlèvant le *required* dans l'inspecteur manuellement et on voit que **errors** nous envoi un tableau d'erreurs.
+
+    ```
+    ^ array:1 [▼
+      "name" => array:1 [▼
+        0 => "Name is required"
+      ]
+    ]
+    ```
+
+5. Le problème c'est que le message est en anglais. On regarde dans la doc et heuresement on peut la changer.
+
+    ```
+    Validator::lang('fr);
+    ```
+
+6. Le résultat est meilleur, mais il laisse le mot *Name* en anglais. 
+
+    Nous on veut le changer, il ne faut pas hésiter à regarder directement le code source pour voir comment la personne la codé.
+
+    - On a cherché d'abord par le mot **errors**, ensuite on a vu qu'il y avait une méthode **checkAndSetLabel**, où il fait appele à une propriété *labels*, on revient donc dans la doc principale et on cherche par le mot *labels* comme ça on est tombé directement sur la partie où il nous explique comment faire.
+
+    - On copie la partie qui nous intéresse et on remplace les clés et les valeurs par les données qui nous intéressent :
+
+    ```
+    $validator->labels(array(
+        'name' => 'Titre',
+        'contenu' => 'Contenu'
+    ));
+    ```
+
+6. On peut remplacer le **dd** par :
+
+    ```
+    $errors = $validator->errors();
+    ```
+
+    On teste et maitenant on a bien le message sous l'input.
+
+
+
+
+
+
+
 
 
 

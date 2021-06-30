@@ -2,6 +2,7 @@
 
 use App\Connection;
 use App\Table\PostTable;
+use Valitron\Validator;
 
 $pdo = Connection::getPDO();
 $postTable = new PostTable($pdo);
@@ -11,19 +12,27 @@ $success = false;
 $errors = [];
 
 if (!empty($_POST)) {
-    if (empty($_POST['name'])) {
-        $errors['name'][] = 'Le champs titre ne peut pas être vide';
-    }
-    if (mb_strlen($_POST['name']) <= 10) {
-        $errors['name'][] = 'Le champs titre doit contenir plus de 10 caractères';
-    }
+    // On change la langue
+    Validator::lang('fr');
+
+    $validator = new Validator($_POST);
+
+    // On change le nom des proriétés
+    $validator->labels(array(
+        'name' => 'Titre',
+        'content' => 'Contenu'
+    ));
+
+    $validator->rule('required', 'name');
     $post->setName($_POST['name']);
 
-    if (empty($errors)) {
+    if ($validator->validate()) {
         $postTable->update($post);
         // Si pas d'erreur lors de la requête
         $success = true;
-    }   
+    } else {
+        $errors = $validator->errors();
+    }
 }
 ?>
 
