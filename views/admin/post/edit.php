@@ -19,9 +19,9 @@ if (!empty($_POST)) {
     $validator = new Validator($_POST);
 
     // Valide l'existence du titre
-    $validator->rule('required', 'name');
+    $validator->rule('required', ['name', 'slug']);
     // valide la longueur du titre
-    $validator->rule('lengthBetween', 'name', 10, 200);
+    $validator->rule('lengthBetween', ['name', 'slug'], 10, 200);
     $post->setName($_POST['name']);
 
     if ($validator->validate()) {
