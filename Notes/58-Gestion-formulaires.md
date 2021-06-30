@@ -112,3 +112,39 @@ HTML;
     ```
     $value = $this->getValue($key);
     ```
+
+### On gère les erreurs
+
+1. On avait ajouté à la classe 'form-control' de l'input la classe Boostrap *is-invalid*, pour pouvoir l'ajouter danjs notre nouvel code, on va initialiser une variable qui contiendar la valeur initiale et on va créer la condition pour vérifier si il y a des erreurs, si c'est le cas on ajoutera la classe is-invalid aussi.
+
+    ```
+    $inputClass = 'form-control';
+    if (isset($this->errors[$key])) {
+        $inputClass .= ' is-invalid';
+    }
+    ```
+
+2. On remplace la variable laissé en dur par cette variable.
+
+    ```
+    <input type="text" id="field{$key}" class="{$inputClass}" name="{$key}" value="{$value}" required>
+    ```
+
+3. On va maintenant re créer la *div* qui va contenir la classe Bootstrap *invalid-feedback*, c'est elle qui va nous retourner le message d'erreur.
+
+    ```
+    $invalidFeedback = '';
+    if (isset($this->errors[$key])) {
+        $inputClass .= ' is-invalid';
+        $invalidFeedback = '<div class="invalid-feedback">' . implode('<br>', $this->errors[$key]) . '</div>';
+    }
+    return <<<HTML
+        <div class="form-group">
+            <label for="field{$key}">{$label}</label>
+            <input type="text" id="field{$key}" class="{$inputClass}" name="{$key}" value="{$value}" required>
+            {$invalidFeedback}
+        </div>
+    ```
+
+4. On teste et ça marche.
+
