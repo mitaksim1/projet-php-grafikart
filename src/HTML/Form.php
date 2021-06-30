@@ -15,17 +15,12 @@ class Form {
     public function input(string $key, string $label): string
     {
         $value = $this->getValue($key);
-        $inputClass = 'form-control';
-        $invalidFeedback = '';
-        if (isset($this->errors[$key])) {
-            $inputClass .= ' is-invalid';
-            $invalidFeedback = '<div class="invalid-feedback">' . implode('<br>', $this->errors[$key]) . '</div>';
-        }
+       
         return <<<HTML
             <div class="form-group">
                 <label for="field{$key}">{$label}</label>
-                <input type="text" id="field{$key}" class="{$inputClass}" name="{$key}" value="{$value}" required>
-                {$invalidFeedback}
+                <input type="text" id="field{$key}" class="{$this->getInputClass($key)}" name="{$key}" value="{$value}" required>
+                {$this->getErrorFeedback($key)}
             </div>
 HTML;
     }
@@ -33,17 +28,13 @@ HTML;
     public function textarea(string $key, string $label): string
     {
         $value = $this->getValue($key);
-        $inputClass = 'form-control';
-        $invalidFeedback = '';
-        if (isset($this->errors[$key])) {
-            $inputClass .= ' is-invalid';
-            $invalidFeedback = '<div class="invalid-feedback">' . implode('<br>', $this->errors[$key]) . '</div>';
-        }
+       
+        
         return <<<HTML
             <div class="form-group">
                 <label for="field{$key}">{$label}</label>
-                <textarea type="text" id="field{$key}" class="{$inputClass}" name="{$key}" required>{$value}"</textarea>
-                {$invalidFeedback}
+                <textarea type="text" id="field{$key}" class="{$this->getInputClass($key)}" name="{$key}" required>{$value}"</textarea>
+                {$this->getErrorFeedback($key)}
             </div>
 HTML;
     }
@@ -60,4 +51,22 @@ HTML;
         // dd($method);
         return $this->data->$method();
     }
+
+    private function getInputClass(string $key): string
+    {
+        $inputClass = 'form-control';
+        if (isset($this->errors[$key])) {
+            $inputClass .= ' is-invalid';
+        }
+        return $inputClass;
+    }
+
+    private function getErrorFeedback(string $key): string
+    {
+        if (isset($this->errors[$key])) {
+            return '<div class="invalid-feedback">' . implode('<br>', $this->errors[$key]) . '</div>';
+        }
+        return '';
+    } 
 }
+    

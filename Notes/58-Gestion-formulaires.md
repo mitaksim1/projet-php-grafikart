@@ -184,3 +184,48 @@ HTML;
     ```
 
 3. On re teste et maintenant on a bien le textarea avec le contenu à l'intérieur.
+
+### Factorisation du code
+
+Dans les deux méthodes on répète le même code, alors on va le factoriser dans deux autres méthodes, une qui va gérer l'ajout de la classe 'is-invalid' et l'autre qui va gérer l'ajout de la div avec le texte de l'erreur.
+
+1. On commence par la méthode **getInputClass** :
+
+    ```
+    private function getInputClass(string $key)
+    {
+        $inputClass = 'form-control';
+        if (isset($this->errors[$key])) {
+            $inputClass .= ' is-invalid';
+        }
+        return $inputClass;
+    }
+    ```
+2. Ensuite **getErrorFeedback**.
+
+    ```
+    private function getErrorFeedback(string $key)
+    {
+        if (isset($this->errors[$key])) {
+            return '<div class="invalid-feedback">' . implode('<br>', $this->errors[$key]) . '</div>';
+        }
+        return '';
+    } 
+    ```
+
+3. Dans les méthodes **input** et **tetxarea** on a qu'à les appeler comme suit :
+
+    ```
+    <input type="text" id="field{$key}" class="{$this->getInputClass($key)}" name="{$key}" value="{$value}" required>
+    {$this->getErrorFeedback($key)}
+    ```
+
+    ```
+    <textarea type="text" id="field{$key}" class="{$this->getInputClass($key)}" name="{$key}" required>{$value}"</textarea>
+    {$this->getErrorFeedback($key)}
+    ```
+
+4. On teste pour vérifier que rien n'est cassé et ça marche.
+
+
+
