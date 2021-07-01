@@ -18,7 +18,7 @@ if (!empty($_POST)) {
     Validator::lang('fr');
 
     // Validation des articles
-    $validator = new PostValidator($_POST, $postTable);
+    $validator = new PostValidator($_POST, $postTable, $post->getId());
     
     $post
         ->setName($_POST['name'])

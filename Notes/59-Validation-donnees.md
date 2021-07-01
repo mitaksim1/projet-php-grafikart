@@ -115,3 +115,60 @@ On va essayer de factoriser notre code pour la partie validation aussi.
     ```
 
 7. On teste et ça marche!
+
+###
+
+Quand os essaie de soumettre le formulaire, il ne nous laisse pas faire en nous disant que ce slug existe déjà.
+
+C'est normal, vu qu'au moment où il fait la requête dans la bdd il tombe sur son id aussi.
+
+Pour règler ça :
+
+1. On doit changer la signature de la méthode **exists()** et ses instructions :
+
+    - On va rajouter le paramètre $exceptId qui est initialisé à null qui va vérifier l'id de l'article.
+
+    - Onlance la requête sans la préparer où on vérifie d'abord juste le slug ($field).
+
+    - Ensuite, on vérifie si on a bien l'id de l'article, si oui on concatène une autre conditionà la requêter et on ajoute cette id au tableau qui va être exécuté.
+
+    - A ce moment là, on prepare la requête.
+
+    ```
+    public function exists(string $field, $value, ?int $exceptId) = null: bool
+    {
+        $sql = "SELECT COUNT(id) FROM {$this->table} WHERE $field = ?";
+        $params = [$value];
+        if ($exceptId !== null) {
+            $sql .= " AND id != ?";
+            $params[] = $exceptId;
+        }
+        $query = $this->pdo->prepare($sql);
+        $query->execute($params);
+        $result = (int)$query->fetch(PDO::FETCH_NUM)[0] > 0;
+
+        return $result;
+    }
+    ```
+
+2. Dans le constuct de PostValidator, on doit injecter ce nouveau paramètre :
+
+    ```
+    public function __construct(array $data, PostTable $table, ?int $postId = null)
+    {
+        ....
+
+        $validator->rule(function ($field, $value) use ($table, $postId) {
+            return !$table->exists($field, $value, $postId);
+        }, 'slug', 'Ce slug est déjà utilisé'); 
+        $this->validator = $validator;
+    }
+    ```
+
+3. On fait la même chose dans **edit.php** lors de l'instanciation de la classe.
+
+    ```
+    $validator = new PostValidator($_POST, $postTable, $post->getId());
+    ```
+
+
