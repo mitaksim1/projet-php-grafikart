@@ -1,6 +1,7 @@
 <?php
 namespace App\Validators;
 
+use App\Table\PostTable;
 use App\Validator;
 
 class PostValidator {
@@ -8,7 +9,7 @@ class PostValidator {
     private $data;
     private $validator;
 
-    public function __construct(array $data)
+    public function __construct(array $data, PostTable $table)
     {
         $this->data = $data;
 
@@ -20,8 +21,8 @@ class PostValidator {
         // Valide le champs slug
         $validator->rule('slug', 'slug');
         // On crée notre propre validator
-        $validator->rule(function ($field, $value) {
-            return false;
+        $validator->rule(function ($field, $value) use ($table) {
+            return !$table->exists($field, $value);
         }, 'slug', 'Ce slug est déjà utilisé'); 
         $this->validator = $validator;
     }

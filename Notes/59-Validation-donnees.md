@@ -75,3 +75,43 @@ On va essayer de factoriser notre code pour la partie validation aussi.
     }, 'slug', 'Ce slug est déjà utilisé'); 
     ```
 
+3. La partie visuelle est faite, il nous faut créer la logique de la condition.
+
+    On veut qu'elle nous retourne *true* si le slug n'existe pas déjà dans la bdd ou *false* si elle existe.
+
+    Dans **PostValidator** on a pas accès à la connexion avec la base de données, on va alors créer notre méthode dans la classe **Table**.
+
+    On pourra injecter cette méthode dans le constructeur de **PostValidator** après.
+
+    ```
+    public function exists(string $field, $value): bool
+    {
+        $query= $this->pdo->prepare("SELECT COUNT(id) FROM {$this->table} WHERE $field = ?");
+        $query->execute([$value]);
+        $result = (int)$query->fetch(PDO::FETCH_NUM)[0] > 0;
+    }
+    ```
+
+4. On pourra accèder à cette méthode depuis PostValidator :
+
+    ```
+    public function __construct(array $data, PostTable $table)
+    ```
+
+5. On précise que l'on utilisé cette classe avec un *use* comme suit :
+
+    - Ce callback va nous retourner *true* si c'est c'est faux que cette donné existe
+
+    ```
+    $validator->rule(function ($field, $value) use ($table) {
+        return !$table->exists($field, $value);
+    }, 'slug', 'Ce slug est déjà utilisé'); 
+    ```
+
+6. Comme on a rajouté l'instance de PostTable dans le constructeur, il faut aussi que je le passe en argument lors de l'instanciaton de PostValidator dans edit.php.
+
+    ```
+    $validator = new PostValidator($_POST, $postTable);
+    ```
+
+7. On teste et ça marche!
