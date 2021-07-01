@@ -271,6 +271,44 @@ Dans les deux méthodes on répète le même code, alors on va le factoriser dan
         return $value;
     ```
 
+4. Si on essaie de modifier le titre et la date, ça ne marche pas, il va falloir que l'on appele la méthode setter qui nous permettra de modifier cette donnée dans la bdd.
+
+    On profite et on fait le même pour les autres champs, dans **edit.php** juste après la partie où on fait la validation :
+
+    ```
+    $post
+        ->setName($_POST['name'])
+        ->setContent($_POST['content'])
+        ->setSlug($_POST['slug'])
+        ->setCreatedAt($_POST['created_at']);
+    ```
+
+5. Le createtAt va poser problème, parce que l'on avait converti en string, dans son setter on va le retourner aussi comme string..
+
+    Dans **Post.php** on va créer nos différents setters.
+
+6. Une fois fait, on va rajouter dans la méthode **update**, la requête pour ces champs aussi.
+
+    ```
+    public function update(Post $post): void 
+    {
+       
+        $query = $this->pdo->prepare("UPDATE {$this->table} SET name = :name, slug = :slug, created_at = :created, content = :content WHERE id = :id");
+       
+        $queryExecuted = $query->execute([
+            'id' => $post->getId(),
+            'name' => $post->getName(),
+            'slug' => $post->getSlug(),
+            'content' => $post->getContent(),
+            'created' => $post->getCreatedAt()->format('Y-m-d H:i:s')
+        ]);
+        ...
+    ```
+
+    - Ce sera à ce moment que l'on va convertir la date de string à DateTime
+
+7. On teste et ça marche.
+
  
 
 

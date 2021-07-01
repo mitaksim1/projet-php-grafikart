@@ -22,7 +22,11 @@ if (!empty($_POST)) {
     $validator->rule('required', ['name', 'slug']);
     // valide la longueur du titre
     $validator->rule('lengthBetween', ['name', 'slug'], 10, 200);
-    $post->setName($_POST['name']);
+    $post
+        ->setName($_POST['name'])
+        ->setContent($_POST['content'])
+        ->setSlug($_POST['slug'])
+        ->setCreatedAt($_POST['created_at']);
 
     if ($validator->validate()) {
         $postTable->update($post);

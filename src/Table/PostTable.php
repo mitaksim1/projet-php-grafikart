@@ -12,11 +12,14 @@ final class PostTable extends Table {
     public function update(Post $post): void 
     {
         // Récupère l'article dont l'id est demandée
-        $query = $this->pdo->prepare("UPDATE {$this->table} SET name = :name WHERE id = :id");
+        $query = $this->pdo->prepare("UPDATE {$this->table} SET name = :name, slug = :slug, created_at = :created, content = :content WHERE id = :id");
         // Exécute la requête qui nous retourne true/false
         $queryExecuted = $query->execute([
             'id' => $post->getId(),
-            'name' => $post->getName()
+            'name' => $post->getName(),
+            'slug' => $post->getSlug(),
+            'content' => $post->getContent(),
+            'created' => $post->getCreatedAt()->format('Y-m-d H:i:s')
         ]);
         // Condition si requête bien exécutée
         if ($queryExecuted === false) {
