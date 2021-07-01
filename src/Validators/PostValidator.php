@@ -17,6 +17,12 @@ class PostValidator {
         $validator->rule('required', ['name', 'slug']);
         // valide la longueur du titre
         $validator->rule('lengthBetween', ['name', 'slug'], 10, 200);
+        // Valide le champs slug
+        $validator->rule('slug', 'slug');
+        // On crée notre propre validator
+        $validator->rule(function ($field, $value) {
+            return false;
+        }, 'slug', 'Ce slug est déjà utilisé'); 
         $this->validator = $validator;
     }
 

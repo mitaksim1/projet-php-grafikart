@@ -55,4 +55,23 @@ On va essayer de factoriser notre code pour la partie validation aussi.
     }
     ```
 
-6. 
+### On gére la validation du slug
+
+1. On commence par ajouter une règle comme on avait fait pour les autres.
+
+    ```
+    $validator->rule('slug', 'slug');
+    ```
+
+2. On teste, en changeant le slug d'un article et ça marche.
+
+    Maintenant, on veut empêcher la création d'un même slug dans un autre article.
+
+    Dans Valitron, on n'a pas de méthode toute prête pour ça, mais on a une fonction qui nous permet de créer nos propres règles.
+
+    ```
+    $validator->rule(function ($field, $value) {
+        return false;
+    }, 'slug', 'Ce slug est déjà utilisé'); 
+    ```
+
