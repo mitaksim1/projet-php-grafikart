@@ -1,6 +1,8 @@
 <?php
 namespace App\HTML;
 
+use DateTime;
+
 class Form {
 
     private $data;
@@ -28,8 +30,7 @@ HTML;
     public function textarea(string $key, string $label): string
     {
         $value = $this->getValue($key);
-       
-        
+          
         return <<<HTML
             <div class="form-group">
                 <label for="field{$key}">{$label}</label>
@@ -39,7 +40,7 @@ HTML;
 HTML;
     }
 
-    private function getValue(string $key)
+    private function getValue(string $key): string
     {
         // Si donnée passée en paramètre est un tableau
         if (is_array($this->data)) {
@@ -47,9 +48,13 @@ HTML;
             return $this->data[$key] ?? null;
         }
         // Dans le cas contraire, faire ce que suit 
-        $method = 'get' . ucfirst($key);
+        $method = 'get' . str_replace(' ', '', ucwords(str_replace('_', ' ', $key)));
         // dd($method);
-        return $this->data->$method();
+        $value = $this->data->$method();
+        if ($value instanceof \DateTimeInterface) {
+            return $value->format('Y-m-d H:i:s');
+        }
+        return $value;
     }
 
     private function getInputClass(string $key): string

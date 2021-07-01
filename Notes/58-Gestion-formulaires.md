@@ -227,5 +227,52 @@ Dans les deux méthodes on répète le même code, alors on va le factoriser dan
 
 4. On teste pour vérifier que rien n'est cassé et ça marche.
 
+### Création d'un champs pour rentrer une date
+
+1. On commence par appeler la méthode **input** dans notre formulaire.
+
+    ```
+    <?= $form->input('created_at', 'Date de création'); ?>
+    ```
+
+2. Si on teste on a une erreur : *Call to undefined method App\Model\Post::getCreated_at()*, on voit que le mot created est un majuscule et le mot A de at en minuscule, il va falloir changer notre variable $method que l'on avait crée dans la méthode *getValue()* **HTML/Form.php**.
+
+    ```
+    $method = 'get' . str_replace(' ', '', ucwords(str_replace('_', ' ', $key)));
+    ```
+
+    - Si **$key** a un underscore ("_") la méthode *str_replace* va le remplacer par un espace vide (" "). 
+    
+    On va se retrouver donc avec deux mots.
+
+    - **ucwords** : va mettre une majuscule à la première lettre de ces deux mots.
+
+    - Ensuite on appelle encore **str_replace** pour enlèver l'espace que l'on avait crée.
+
+    Dans notre cas, on va se retrouver donc, avec le mot *created_at* qui deviendra *CreatedAt*.
+
+3. On teste et on a un autre message d'erreur : *Object of class DateTime could not be converted to string*, cela est du au fait que quand on fait un getValue() il va renvoyer la valeur DateTime de getCreatedAt à la méthode input qui à son tour essaie de l'injecter sur forme de string.
+
+    Pour corriger ça :
+
+    - La première chose que l'on va faire c'est préciser le type de retour de la méthode *getValue* à string.
+
+    ```
+    private function getValue(string $key): string
+    ```
+
+    - On va stocker la valeur reçu dans une variable, pour pouvoir faire une condition si la valeur retourné et du type DateTime.
+
+    ```
+    $value = $this->data->$method();
+        if ($value instanceof DateTimeInterface) {
+            return $value->format('Y-m-d H:i:s');
+        }
+        return $value;
+    ```
+
+ 
+
+
 
 
