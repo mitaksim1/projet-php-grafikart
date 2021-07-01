@@ -181,4 +181,39 @@ Pour règler ça :
     }, ['slug', 'name'], 'Cette valeur est déjà utilisé'); 
     ```
 
+### On prévoit des situations pour mieux factoriser le code
+
+On peut se dire que demain, on va avoir besoin des méthodes **validate()** et **errors()** pour valider les données d'une table Catégories.
+
+On va donc, les mettre dans une classe parent, comme ça elles pourront être héritées par les classes qui en auront besoin.
+
+1. On crée la classe **AbstractValidator** où on va C/C tout le code de PostValidator, on va effacer les données dont on a pas besoin peit à peti.
+
+    A la fin on se retrouve avec ce code :
+
+    ```
+    <?php
+    namespace App\Validators;
+
+    use App\Validator;
+
+    abstract class PostValidator {
+
+        private $data;
+        private $validator;
+
+        public function __construct(array $data)
+        {
+            $this->data = $data;
+
+            $validator = new Validator($data);
+            $this->validator = $validator;
+        }
+    }
+    ```
+
+2. Maintenant, dans PostValidator, on a qu'a extends la classe parent et enlèver les données dont on a plus besoin.
+
+3. On n'oublie pas de passer les propriétés du parent en type protégée.
+
 
