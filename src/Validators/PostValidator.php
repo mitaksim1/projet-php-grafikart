@@ -23,7 +23,7 @@ class PostValidator {
         // On crée notre propre validator
         $validator->rule(function ($field, $value) use ($table, $postId) {
             return !$table->exists($field, $value, $postId);
-        }, 'slug', 'Ce slug est déjà utilisé'); 
+        }, ['slug', 'name'], 'Cette valeur est déjà utilisé'); 
         $this->validator = $validator;
     }
 

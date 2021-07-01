@@ -171,4 +171,14 @@ Pour règler ça :
     $validator = new PostValidator($_POST, $postTable, $post->getId());
     ```
 
+4. Pour ajouter cette vérification au titre aussi, il suffit de rajouter l'index au tableau passé et changer le message:
+
+    ```
+    $validator->rule(function ($field, $value) use ($table, $postId) {
+
+        return !$table->exists($field, $value, $postId);
+
+    }, ['slug', 'name'], 'Cette valeur est déjà utilisé'); 
+    ```
+
 
