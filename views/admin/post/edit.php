@@ -4,6 +4,7 @@ use App\Connection;
 use App\Table\PostTable;
 use App\Validator;
 use App\HTML\Form;
+use App\Validators\PostValidator;
 
 $pdo = Connection::getPDO();
 $postTable = new PostTable($pdo);
@@ -16,12 +17,9 @@ if (!empty($_POST)) {
     // On change la langue
     Validator::lang('fr');
 
-    $validator = new Validator($_POST);
-
-    // Valide l'existence du titre
-    $validator->rule('required', ['name', 'slug']);
-    // valide la longueur du titre
-    $validator->rule('lengthBetween', ['name', 'slug'], 10, 200);
+    // Validation des articles
+    $validator = new PostValidator($_POST);
+    
     $post
         ->setName($_POST['name'])
         ->setContent($_POST['content'])
