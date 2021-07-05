@@ -2,7 +2,6 @@
 
 use App\Connection;
 use App\Table\PostTable;
-use App\Validator;
 use App\HTML\Form;
 use App\ObjectHelper;
 use App\Validators\PostValidator;
@@ -15,8 +14,6 @@ $success = false;
 $errors = [];
 
 if (!empty($_POST)) {
-    // On change la langue
-    Validator::lang('fr');
 
     // Validation des articles
     $validator = new PostValidator($_POST, $postTable, $post->getId());
@@ -49,10 +46,4 @@ $form = new Form($post, $errors);
 
 <h1>Editer l'article <?= e($post->getName()) ?></h1>
 
-<form action="" method="POST">
-    <?= $form->input('name', 'Titre'); ?>
-    <?= $form->input('slug', 'URL'); ?>
-    <?= $form->textarea('content', 'Contenu'); ?>
-    <?= $form->input('created_at', 'Date de création'); ?>
-    <button class="btn btn-primary">Modifier</button>
-</form>
+<?php require('_form.php'); ?>

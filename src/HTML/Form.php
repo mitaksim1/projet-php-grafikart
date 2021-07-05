@@ -14,6 +14,7 @@ class Form {
         $this->errors = $errors;
     }
 
+    // Retourne le code HTML de l'input du formulaire
     public function input(string $key, string $label): string
     {
         $value = $this->getValue($key);
@@ -27,6 +28,7 @@ class Form {
 HTML;
     }
 
+    // Retourne le code HTML pour le textarea du formulaire
     public function textarea(string $key, string $label): string
     {
         $value = $this->getValue($key);
@@ -40,7 +42,9 @@ HTML;
 HTML;
     }
 
-    private function getValue(string $key): string
+    // Prends la avleur de l'input du formulaire
+    // Peut être null, parce qu'au moment de la création il sera vide
+    private function getValue(string $key): ?string
     {
         // Si donnée passée en paramètre est un tableau
         if (is_array($this->data)) {
@@ -57,6 +61,7 @@ HTML;
         return $value;
     }
 
+    // Ajoute la classe 'is-invalid' pour afficher message d'erreur Boostrap
     private function getInputClass(string $key): string
     {
         $inputClass = 'form-control';
