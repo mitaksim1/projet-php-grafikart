@@ -4,6 +4,7 @@ use App\Connection;
 use App\Table\PostTable;
 use App\Validator;
 use App\HTML\Form;
+use App\ObjectHelper;
 use App\Validators\PostValidator;
 
 $pdo = Connection::getPDO();
@@ -19,12 +20,7 @@ if (!empty($_POST)) {
 
     // Validation des articles
     $validator = new PostValidator($_POST, $postTable, $post->getId());
-    
-    $post
-        ->setName($_POST['name'])
-        ->setContent($_POST['content'])
-        ->setSlug($_POST['slug'])
-        ->setCreatedAt($_POST['created_at']);
+    ObjectHelper::hydrate($post, $_POST, ['name', 'content', 'slug', 'created_at']);
 
     if ($validator->validate()) {
         $postTable->update($post);

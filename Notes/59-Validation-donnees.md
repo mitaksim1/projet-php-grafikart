@@ -216,4 +216,83 @@ On va donc, les mettre dans une classe parent, comme ça elles pourront être h�
 
 3. On n'oublie pas de passer les propriétés du parent en type protégée.
 
+### A nous de jouer
+
+#### Challenge 1
+
+Essayer de créer une classe qui va générer les appels aux setters de $post.
+
+On voudrait faire quelque chose comme ça : App\Object::hydrate($post, $_POST['name', 'content', 'slug', 'created_at]).
+
+L'avantage en plus d'économiser quelques lignes c'est que dans le futur si on a beaucoup de champs ça nous permettra de aller plus vite.
+
+### Challenge 2
+
+Deuxième challenge, créer la partie **new.php**, où on doit pouvoir créer un article et le sauvegarder dans la bdd.
+
+### Correction challenge 1
+
+1. On commence para créer la classe **ObjectHelper.php** directement à la racine du sossier **src**.
+
+    ```
+    <?php
+    namespace App;
+
+    class ObjectHelper {
+
+        
+    }
+    ````
+
+2. On crée la méthode **hydrate** avec les paramètres demandées dans l'ennoncé.
+
+    On C/C le code que l'on veut remplacer :
+
+    ```
+    <?php
+    namespace App;
+
+    class ObjectHelper {
+
+        public function hydratr($object, array $data, array $fields) 
+        {
+            $post
+            ->setName($_POST['name'])
+            ->setContent($_POST['content'])
+            ->setSlug($_POST['slug'])
+            ->setCreatedAt($_POST['created_at']);
+        }
+    }
+    ```
+
+3. On peut se servir de la même logique que l'on avait utilisé dans le Form.php pour renommer les setters en camelCase.
+
+    ```
+    $method = 'set' . str_replace(' ', '', ucwords(str_replace('_', ' ', $field)));
+    ```
+
+    - **'set'** : Dans le Form on appelé les getters et ici on appelle les setters, alors ne pas oublier de changer cette partie.
+
+4. On veut pouvoir remplacer les champs passées en paramètre, alors on va boucler sur les champs et pour chaque champs on va les renommer en suivant la méthode que l'on avait crée. 
+
+    A la fin on prend l'objet (l'article), on lui passe la méthode pour changer les champs et comme clé on lui passé le champs lui même.
+
+    ```
+    public static function hydrate($object, array $data, array $fields): void
+    {
+        foreach ($fields as $field) {
+            $method = 'set' . str_replace(' ', '', ucwords(str_replace('_', ' ', $field)));
+            $object->$method($data[$field]);
+        }
+    }
+    ```
+
+
+
+
+
+
+
+
+
 
