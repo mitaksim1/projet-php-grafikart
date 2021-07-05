@@ -60,6 +60,19 @@ On va commencer par créer un noveau template pour l'admin de la partie articles
     }
     ```
 
-4. 
+### Routing
+
+1. On commence par commenter nos routes pour mieux les organiser.
+
+    Ensuite on C/C toute la partie des routes admin/post pour les routes des categories, on n'aura qu'à changer les chemins de **post** à **category**.
+
+2. On va ajouter le lien dans la page.
+
+    ```
+    <li class="nav-item">
+        <a href="<?= $router->url('admin_categories') ?>" class="nav-link">Categories</a>
+    </li>
+    ```
+
 
 
