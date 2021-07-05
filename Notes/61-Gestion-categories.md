@@ -20,3 +20,14 @@ On va commencer par créer un noveau template pour l'admin de la partie articles
     ```
 
 3. On teste et ça marche.
+
+### La partie Catégories
+
+1. Dans **views/admin**, on va dupliquer le dossier **post**, parce qu'on veut les mêmes fonctionnalités.
+
+    On renomme le dossier **category**.
+
+2. Dans **src/Model** on avait déjà crée la classe **Category.php**.
+
+    On va créer les setters qu'il manque.
+
