@@ -68,12 +68,14 @@ class Router {
         // ob_start va sauvegarder le require
         // Pour donner acccès à toutes les variables contenues dans AltoRouter
         $router = $this;
+        $isAdmin = strpos($view, 'admin/') !== false;
+        $layout = $isAdmin ? 'admin/layouts/default' : 'layouts/default';
         ob_start();
         require $this->viewPath . DIRECTORY_SEPARATOR . $view . '.php';
         // ob_get_clean va récupérer la ligne ou les lignes contenues entre ob_start et lui, dans ce cas il va sauvegarder dans $content le require ci-dessus
         $content = ob_get_clean();
         // Une fois le require récupéré on va appeler la vue (à créer) default.php
-        require $this->viewPath . DIRECTORY_SEPARATOR . 'layouts/default.php';
+        require $this->viewPath . DIRECTORY_SEPARATOR . $layout . '.php';
 
         return $this;
     }
