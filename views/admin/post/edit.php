@@ -37,6 +37,13 @@ $form = new Form($post, $errors);
     </div>
 <?php endif ?>
 
+<!-- Message si article a bien été crée -->
+<?php if (isset($_GET['created'])): ?>
+    <div class="alert alert-success">
+        L'article a bien été crée
+    </div>
+<?php endif ?>
+
 <!-- Message si erreur lors de la modification -->
 <?php if (!empty($errors)): ?>
     <div class="alert alert-danger">

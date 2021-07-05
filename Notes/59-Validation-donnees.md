@@ -447,7 +447,32 @@ Deuxième challenge, créer la partie **new.php**, où on doit pouvoir créer un
     <?php endif ?>
     </button>
     ```
-    
+
+### Création du bouton "Créer" dans la page admin
+
+1. Au lieu de mettre le titre "Actions", on va mettre un bouton à la place :
+
+    ```
+     <tr>
+        <th>#id</th>
+        <th scope="col">Titre</th>
+        <th>
+            <a href="<?= $router->url('admin_post_new') ?>" class="btn btn-primary">Créer</a>
+        </th>
+    </tr>
+    ```
+
+2. Dans *edit.php*, on va créer une condition pour que le message s'affiche si l'article a bien été crée.
+
+    ```
+    <?php if (isset($_GET['created'])): ?>
+        <div class="alert alert-success">
+            L'article a bien été crée
+        </div>
+    <?php endif ?>
+    ```
+
+3. On teste et ça marche!
 
 
 

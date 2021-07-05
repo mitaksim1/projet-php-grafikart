@@ -8,7 +8,6 @@ use App\ObjectHelper;
 use App\Validators\PostValidator;
 
 // Pour afficher un message si modification réussie
-$success = false;
 $errors = [];
 
 // On va encore créer l'article, alors pour l'instant on ntancie juste la classe avec l'objet vide
@@ -35,13 +34,6 @@ if (!empty($_POST)) {
 }
 $form = new Form($post, $errors);
 ?>
-
-<!-- Message si création de l'aricle réussie -->
-<?php if ($success): ?>
-    <div class="alert alert-success">
-        L'article a bien été enregistré
-    </div>
-<?php endif ?>
 
 <!-- Message si erreur lors de la création de l'article -->
 <?php if (!empty($errors)): ?>
