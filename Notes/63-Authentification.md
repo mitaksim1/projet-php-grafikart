@@ -139,3 +139,24 @@ Ce qu'on veut faire c'est empêcher des gens d'avoir accès à ces pages là et 
     ```
     $form = new Form($user, $errors);
     ```
+
+6. Si on teste, on va avoir une erreur, parce que $form s'attend à avoir un tableau des erreurs et ici on n'en a qu'un.
+
+    On peut changer alors, la méthode **getErrorFeedback** en créant une condition qui va vérifier ce détail.
+
+    ```
+    private function getErrorFeedback(string $key): string
+    {
+        if (isset($this->errors[$key])) {
+            if (is_array($this->errors[$key])) {
+                $error = implode('<br>', $this->errors[$key]);
+            } else {
+                $error = $this->errors[$key];
+            }
+            return '<div class="invalid-feedback">' . $error . '</div>';
+        }
+        return '';
+    } 
+    ```
+
+7. On re teste, en n'oubliant pas d'effacer le *required* dans l'inspecteur et ça marche.
