@@ -1,10 +1,13 @@
 <?php
 
+use App\Auth;
 use App\Connection;
 use App\Table\PostTable;
 use App\HTML\Form;
 use App\ObjectHelper;
 use App\Validators\PostValidator;
+
+Auth::check();
 
 $pdo = Connection::getPDO();
 $postTable = new PostTable($pdo);
@@ -20,7 +23,7 @@ if (!empty($_POST)) {
     ObjectHelper::hydrate($post, $_POST, ['name', 'content', 'slug', 'created_at']);
 
     if ($validator->validate()) {
-        $postTable->update($post);
+        $postTable->updatePost($post);
         // Si pas d'erreur lors de la requête
         $success = true;
     } else {

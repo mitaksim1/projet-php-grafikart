@@ -9,50 +9,26 @@ final class PostTable extends Table {
     protected $table = "post";
     protected $class = Post::class;
 
-    public function create(Post $post): void
+    public function createPost (Post $post): void
     {
-        $query = $this->pdo->prepare("INSERT INTO {$this->table} SET name = :name, slug = :slug, created_at = :created, content = :content");
-        $queryExecuted = $query->execute([
+        $id = $this->create([
             'name' => $post->getName(),
             'slug' => $post->getSlug(),
             'content' => $post->getContent(),
-            'created' => $post->getCreatedAt()->format('Y-m-d H:i:s')
+            'created_at' => $post->getCreatedAt()->format('Y-m-d H:i:s')
         ]);
-        // Condition si requête bien exécutée
-        if ($queryExecuted === false) {
-            throw new \Exception("Impossible de créer l'enregistrement dans la table {$this->table}");
-        }
-        $post->setId($this->pdo->lastInsertId());
+        $post->setId($id);
     }
 
-    public function update(Post $post): void 
+    public function updatePost(Post $post): void 
     {
-        // Récupère l'article dont l'id est demandée
-        $query = $this->pdo->prepare("UPDATE {$this->table} SET name = :name, slug = :slug, created_at = :created, content = :content WHERE id = :id");
-        // Exécute la requête qui nous retourne true/false
-        $queryExecuted = $query->execute([
+        $this->update([
             'id' => $post->getId(),
             'name' => $post->getName(),
             'slug' => $post->getSlug(),
             'content' => $post->getContent(),
-            'created' => $post->getCreatedAt()->format('Y-m-d H:i:s')
-        ]);
-        // Condition si requête bien exécutée
-        if ($queryExecuted === false) {
-            throw new \Exception("Impossible de modifier l'enregistrement {$post->getId()} dans la table {$this->table}");
-        }
-    }
-
-    public function delete(int $id): void
-    {
-        // Récupère l'article dont l'id est demandée
-        $query = $this->pdo->prepare("DELETE FROM {$this->table} WHERE id = ?");
-        // Exécute la requête qui nous retourne true/false
-        $queryExecuted = $query->execute([$id]);
-        // Condition si requête bien exécutée
-        if ($queryExecuted === false) {
-            throw new \Exception("Impossible de supprimer l'enregistrement $id dans la table {$this->table}");
-        }
+            'created_at' => $post->getCreatedAt()->format('Y-m-d H:i:s')
+        ], $post->getId());
     }
 
     public function findPaginated()

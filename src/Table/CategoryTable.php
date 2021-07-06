@@ -39,5 +39,10 @@ final class CategoryTable extends Table {
              $postsById[$category->getPostId()]->addCategory($category);
          }
     }
+
+    public function all()
+    {
+        return $this->queryAndFetchAll("SELECT * FROM {$this->table} ORDER BY id DESC");  
+    }
     
 }

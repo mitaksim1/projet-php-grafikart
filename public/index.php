@@ -45,7 +45,7 @@ $router->get('/', 'post/index', 'home')
         ->match('/admin/category/[i:id]', 'admin/category/edit', 'admin_category')
         ->post('/admin/category/[i:id]/delete', 'admin/category/delete', 'admin_category_delete')
         ->match('/admin/category/new', 'admin/category/new', 'admin_category_new')
-        ->get('/admin/form', 'admin/form', 'form')
+        // ->get('/admin/form', 'admin/form', 'form')
 
         ->run();
 

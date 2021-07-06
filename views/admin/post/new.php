@@ -1,11 +1,14 @@
 <?php
 
-use App\Connection;
-use App\Table\PostTable;
+use App\Auth;
 use App\HTML\Form;
+use App\Connection;
 use App\Model\Post;
 use App\ObjectHelper;
+use App\Table\PostTable;
 use App\Validators\PostValidator;
+
+Auth::check();
 
 // Pour afficher un message si modification réussie
 $errors = [];
@@ -24,7 +27,7 @@ if (!empty($_POST)) {
     ObjectHelper::hydrate($post, $_POST, ['name', 'content', 'slug', 'created_at']);
 
     if ($validator->validate()) {
-        $postTable->create($post);
+        $postTable->createPost($post);
         // Une fois l'article crée, on envoi vers la page
         header('Location: ' . $router->url('admin_post', ['id' => $post->getId()]) . '?created=1');
         exit();

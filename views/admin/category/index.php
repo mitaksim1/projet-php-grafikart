@@ -1,16 +1,15 @@
 <?php
 use App\Auth;
 use App\Connection;
-use App\Table\PostTable;
+use App\Table\CategoryTable;
 
 Auth::check();
 
-$title = 'Administration';
+$title = 'Gestion des catégories';
 
 $pdo = Connection::getPDO();
-
-$table = new PostTable($pdo);
-[$posts, $pagination] = $table->findPaginated();
+$table = new CategoryTable($pdo);
+$items = $table->all();
 
 $link = $router->url('admin_posts');
 ?>
@@ -27,26 +26,29 @@ $link = $router->url('admin_posts');
   <thead>
     <tr>
         <th>#id</th>
+        <th>Slug</th>
+        <th>URL</th>
         <th scope="col">Titre</th>
         <th>
-            <a href="<?= $router->url('admin_post_new') ?>" class="btn btn-primary">Créer</a>
+            <a href="<?= $router->url('admin_category_new') ?>" class="btn btn-primary">Créer</a>
         </th>
     </tr>
   </thead>
   <tbody>
-    <?php foreach ($posts as $post) : ?>
+    <?php foreach ($items as $item) : ?>
     <tr>
-        <td>#<?= $post->getId() ?></td>
+        <td>#<?= $item->getId() ?></td>
         <td scope="row">
-            <a href="<?= $router->url('admin_post', ['id' => $post->getId()]) ?>">
-            <?= e($post->getName()) ?>
+            <a href="<?= $router->url('admin_category', ['id' => $item->getId()]) ?>">
+            <?= e($item->getName()) ?>
             </a>
         </td>
+        <td><?= $item->getSlug() ?></td>
         <td scope="row">
-        <a href="<?= $router->url('admin_post', ['id' => $post->getId()]) ?>" class="btn btn-primary">
+        <a href="<?= $router->url('admin_category', ['id' => $item->getId()]) ?>" class="btn btn-primary">
         Editer
         </a>
-        <form action="<?= $router->url('admin_post_delete', ['id' => $post->getId()]) ?>" method="POST" 
+        <form action="<?= $router->url('admin_category_delete', ['id' => $item->getId()]) ?>" method="POST" 
             onsubmit="return confirm('Voulez vous vraiment effectuer cette action ?')") style="display:inline">
             <button type="submit" class="btn btn-danger">Supprimer</button>
         </form>
@@ -56,7 +58,3 @@ $link = $router->url('admin_posts');
     </tbody>
 </table>
 
-<div class="d-flex justify-content-between my-4">
-    <?= $pagination->previousLink($link) ?>
-    <?= $pagination->nextLink($link) ?>
-</div>

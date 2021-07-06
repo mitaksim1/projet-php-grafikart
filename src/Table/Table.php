@@ -58,4 +58,63 @@ abstract class Table {
 
         return $result;
     }
+
+    public function all()
+    {
+        $sql = "SELECT * FROM {$this->table}";
+        return $this->pdo->query($sql, PDO::FETCH_CLASS, $this->class)->fetchAll();
+    }
+
+    public function delete(int $id)
+    {
+        // Récupère l'article dont l'id est demandée
+        $query = $this->pdo->prepare("DELETE FROM {$this->table} WHERE id = ?");
+        // Exécute la requête qui nous retourne true/false
+        $queryExecuted = $query->execute([$id]);
+        // Condition si requête bien exécutée
+        if ($queryExecuted === false) {
+            throw new \Exception("Impossible de supprimer l'enregistrement $id dans la table {$this->table}");
+        }
+    }
+
+    // $data correpondra aux champs dont on aura besoin pour créer une catégorie
+    public function create(array $data): int
+    {
+        // Récupération des champs
+        $sqlFields = [];
+        foreach ($data as $key => $value) {
+            // Correspond à : name = :name
+            $sqlFields[] = "$key = :$key";
+        }
+        $query = $this->pdo->prepare("INSERT INTO {$this->table} SET " . implode(', ', $sqlFields));
+        $queryExecuted = $query->execute($data);
+        // Condition si requête bien exécutée
+        if ($queryExecuted === false) {
+            throw new \Exception("Impossible de créer l'enregistrement dans la table {$this->table}");
+        }
+        // Retourne l'id du dernier élément crée
+        return (int)$this->pdo->lastInsertId();
+    }
+
+    public function update(array $data, int $id)
+    {
+        // Récupération des champs
+        $sqlFields = [];
+        foreach ($data as $key => $value) {
+            // Correspond à : name = :name
+            $sqlFields[] = "$key = :$key";
+        }
+        $query = $this->pdo->prepare("UPDATE {$this->table} SET " . implode(', ', $sqlFields) . " WHERE id = :id");
+        // array_merge, on va rajouter la clé id au tableau $data
+        $queryExecuted = $query->execute(array_merge($data, ['id' => $id]));
+        // Condition si requête bien exécutée
+        if ($queryExecuted === false) {
+            throw new \Exception("Impossible de modifier l'enregistrement dans la table {$this->table}");
+        }
+    }
+
+    public function queryAndFetchAll(string $sql): array
+    {
+        return $this->pdo->query($sql, PDO::FETCH_CLASS, $this->class)->fetchAll();
+    }
 }
