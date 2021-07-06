@@ -85,4 +85,57 @@ Ce qu'on veut faire c'est empêcher des gens d'avoir accès à ces pages là et 
     ?>
     ```
 
+8. On teste pour voir si la route marche.
 
+### Création du formulaire
+
+1. On fait appel à la méthode **input** déjà crée.
+
+    ```
+    <form action="" method="POST">
+        <?= $form->input('username', 'Nom d\'utilisateur'); ?>
+        <?= $form->input('password', 'Mot de passe'); ?>
+    </form>
+    ```
+
+2. On a bien notre formulaire surla page, le soucis c'est que le mot d passe apparaît quand on le saisi.
+
+    On va rajouter une condition à la méthode input pour gérer le type de l'input pour chaque libellé.
+
+    ```
+    $type = $key === "password" ? "password" : "text";
+
+    <input type="{$type}" id="field{$key}" class="{$this->getInputClass($key)}" name="{$key}" value="{$value}" required>
+    ```
+
+3. On ajouteun bouton à notre formulaire.
+
+    ```
+    <button type="submit" class="btn btn-primary">Se connecter</button>
+    ```
+
+4. Maintenant, il faut traiter les données.
+
+    On commence, bien sûr par vérifier que les données dans la variable $_POST n'est pas vide, ça veut dire s'il y a bien un utilisateur qui essaie de se connecter.
+
+    Si c'est le cas on a bien des données à traiter.
+
+    ```
+    if (!empty($_POST)) {
+    if (empty($_POST['username']) || empty($_POST['password'])) {
+            $errors['password'] = 'Identifiant ou mot de passe incorrect';
+        } 
+    }
+    ```
+
+    - On a initialisé la variable $errors pour pouvoir l'utiliser dans le if.
+
+    ```
+    $errors = [];
+    ```
+
+5. Maintenant, que l'on a cette variable, on pourra la passer comme deuxième paramètre de l'instance de Form.
+
+    ```
+    $form = new Form($user, $errors);
+    ```
