@@ -436,6 +436,36 @@ Dans la classe **Auth** que l'on avait crée, il y restait les instructions à c
     <?php endif ?>
     ```
 
+### Déconnexion
+
+1. Pour pouvoir se déconnecter, on va créer une nouvelle route.
+
+    ```
+    ->post('/logout', 'auth/logout', 'logout')
+    ```
+
+2. Le lien pour cette route on va le mettre dans le **layouts/default.php** admin que l'on avait crée tout au début.
+
+    ```
+    <li class="nav-item">
+        <form action="<?= $router->url('/logout') ?>" method="post">
+            <button type="submit" class="nav-link" style="background:transparent; border:none;">Se déconnecter</button>
+        </form>
+    </li>
+    ```
+
+3. On va créer la page à laquelle on sera redirigée au clique du bouton: **auth/logout.php**.
+
+    ```
+    <?php
+    session_start();
+    session_destroy();
+    header('Location: ' .$router->url('login'));
+    exit();
+    ```
+
+
+
 
 
 
