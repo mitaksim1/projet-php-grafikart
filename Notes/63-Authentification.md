@@ -160,3 +160,173 @@ Ce qu'on veut faire c'est empêcher des gens d'avoir accès à ces pages là et 
     ```
 
 7. On re teste, en n'oubliant pas d'effacer le *required* dans l'inspecteur et ça marche.
+
+8. En cas d'erreur on garde quand même la valeur de l'user pour qu'il n'ait pas à le retaper.
+
+    ```
+    $user->setUsername($_POST['username']);
+    ```
+
+### Vérifier si l'utilisateur existe en base de données
+
+1. On peut créer la logique directemant dans le fichier *login.php*, mais nous on va rester dans la logique de créer une nouvelle table.
+
+    On va C/C **PostTable** , on le renomme **UserTable** et on fera les modifications nécéssaires au fur et à mesure.
+
+    ```
+    <?php
+    namespace App\Table;
+
+    use App\Model\User;
+
+    final class UserTable extends Table {
+
+        protected $table = "user";
+        protected $class = User::class;
+
+    }
+    ```
+
+2. On C/C les instructions crées dans la méthode *find()* de **Table.php**, parce que la logique est la même, on change juste le *WHERE*, parce qu'ici on ne veut pas récupérer l'id mais le username de l'utilisateur.
+
+    ```
+    public function findByUserName(string $username) {
+        
+        $query = $this->pdo->prepare('SELECT * FROM ' . $this->table . ' WHERE username = :username');
+        
+        $query->execute(['username' => $username]);
+
+        $query->setFetchMode(PDO::FETCH_CLASS, $this->class);
+
+        $result = $query->fetch();
+
+        if ($result === false) {
+            throw new NotFoundException($this->table, $username);
+        }
+
+        return $result;
+    }
+    ```
+
+3. Pour pouvoir accéder à la bdd, il faut avoir une connexion avec PDO.
+
+    ```
+    $pdo = Connection::getPDO();
+    ```
+
+4. On accède à la méthode *findByUsername()* en instanciant la classe **UserTable**.
+
+    ```
+    $table = new UserTable($pdo);
+    ```
+
+5. On peut maintenant, vérifier si l'user qui eesaie de se connecter correspond à un user dans la bdd.
+
+    ```
+    $userLogin = $table->findByUsername($_POST['username']);
+    ```
+6. Si on teste, on a une erreur, parce qu'on avait précisé lors de la construction de *NotFoundException* que le deuxième paramètre devrait être du type entier et là on retourne une string ($username), on enlève juste le typage pour ne plus avoir l'erreur et maintenant on a bien le message, sauf qu'il dit *id* au lieu de *username*.
+
+    On va capturer l'erreur pour passer un message du type *NotFoundException* avec le même message que l'on avait crée avant.
+
+    ```
+    try {
+        $userLogin = $table->findByUsername($_POST['username']);
+    } catch (NotFoundException $e) {
+        $errors['password'] = 'Identifiant ou mot de passe incorrect';
+    }  
+    ```
+
+7. On re actualise la page et on reçoit bien le message d'erreur.
+
+    Si on essaie de se logger comme admin, on a pas d'erreur.
+
+8. Il faut maintenant, récupérer et vérifier si le mot de passe correspond aussi à un mot de passe existant dans la bdd.
+
+    ```
+    // Récupération du mot de passe de la bdd
+    $userLogin->getPassword();
+
+    // Récupération du password saisi par l'user
+    $_POST['password'];
+    ```
+
+9. Dans **commands/fill.php** on avait hashé le mot de passe, alors il faut utiliser la fonction **password_verify** pour voir s'ils correspondent.
+
+    ```
+    password_verify($_POST['password'], $userLogin->getPassword());
+    ```
+
+10. Cette fonction va nous retourner true si les mots de passe correpondent ou false si non.
+
+    On fait un dd pour vérifier si ça marche.
+
+11. On traite le cas où la vérification nous retourne *false*, dans ce cas on affichera le même message d'erreur.
+
+    Comme on se répéte on va définir que ce message sera le message à afficher par défaut et on traitera les autres possibles messages au fur et à mesure.
+
+    - On le défini au début de la condition.
+
+    - On change la logique initiale en vérifiant si les variables $_POST['username'] et $_POST['password'] ne sont pas vides.
+
+    Si c'est le cas, on commence le traitement des données.
+
+    - Maitentant, au moment de vérifier si les mots de passe correspondent on va vérifier si la réponse retourné est *true*.
+
+    Si true, on continue le code, sinon il va tomber dans le *catch* et le message s'affichera.
+
+    ```
+    if (!empty($_POST)) {
+
+    // On sauvegarder la valeur saisie dans l'input username
+    $user->setUsername($_POST['username']);
+
+    // On défini ce message comme le message par défaut
+    $errors['password'] = 'Identifiant ou mot de passe incorrect';
+
+    if (!empty($_POST['username']) || !empty($_POST['password'])) {
+
+        // Connexion à la bdd et aux méthodes de UserTable
+        $pdo = Connection::getPDO();
+        $table = new UserTable($pdo);
+
+        // Maintenant on peut vérifier si l'user existe dans la bdd
+        // On capture l'erreur au cas ou
+        try {
+            $userLogin = $table->findByUsername($_POST['username']);
+
+            // Récupération du mot de passe de la bdd
+            $userLogin->getPassword();
+
+            // Récupération du password saisi par l'user
+            $_POST['password'];
+
+            // Vérification si les mots de passe correspondent
+            if (password_verify($_POST['password'], $userLogin->getPassword()) === true) {
+
+            };
+        } catch (NotFoundException $e) {
+
+        }     
+    }     
+    ```
+
+12. Si l'utiliateur est bien connecté, on va le rediriger vers la page d'administration (admin_posts).
+
+    ```
+    if (password_verify($_POST['password'], $userLogin->getPassword()) === true) {
+        header('Location: ' . $router->url('admin_posts'));
+        exit();
+    }
+    ```
+
+    **Rappel** : On met le **exit()** parce que si tout marche, on ne veut pas que ça tombe dans le *catch* on veut que le oce arrête de s'exécuter.
+
+13. On teste et on est bien redirigé vers la page des articles.
+
+
+
+
+
+
+
