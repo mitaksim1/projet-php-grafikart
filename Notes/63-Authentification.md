@@ -404,7 +404,37 @@ Dans la classe **Auth** que l'on avait crée, il y restait les instructions à c
 
 7. Pour tester vraiment si ça marche, dans l'inspecteur, on va dans l'onglet Applications, on supprime la ligne qui contient la session, on reactualise la page et on retombe sur le Forbidden.
 
+### Redirection vers une page d'erreur
 
+1. Pour gérer une page d'erreur, on va changer la partie du code dans **Router.php** qui gérait la direction des pages.
+
+    - On va mettre le code dans un try/catch.
+
+    ```
+    try {
+        ob_start();
+        require $this->viewPath . DIRECTORY_SEPARATOR . $view . '.php';
+        // ob_get_clean va récupérer la ligne ou les lignes contenues entre ob_start et lui, dans ce cas il va sauvegarder dans $content le require ci-dessus
+        $content = ob_get_clean();
+        // Une fois le require récupéré on va appeler la vue (à créer) default.php
+        require $this->viewPath . DIRECTORY_SEPARATOR . $layout . '.php';
+    } catch (ForbiddenException $e) {
+        header('Location: ' .$this->url('login') . '?forbidden=1');
+        exit();
+    }
+    ```
+
+2. On re actualise la page, on est bien redirigé vers la page de login et l'url est bien : *http://localhost:8000/login?forbidden=1*.
+
+3. Dans **login.php**, on va mettre un message d'erreur.
+
+    ```
+    <?php if (isset($_GET['forbidden'])): ?>
+    <div class="alert alert-danger">
+        Vous ne pouvez pas accèder à cette page
+    </div>
+    <?php endif ?>
+    ```
 
 
 
