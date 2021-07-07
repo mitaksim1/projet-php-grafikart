@@ -324,6 +324,90 @@ Ce qu'on veut faire c'est empêcher des gens d'avoir accès à ces pages là et 
 
 13. On teste et on est bien redirigé vers la page des articles.
 
+### Système de session
+
+On a géré juste la connexion, il faut maitenant créer un système de session pour que l'utilisateur soit reconnu dans toutes les pages.
+
+Dans la classe **Auth** que l'on avait crée, il y restait les instructions à coder, c'est là qu'on va gérer les sessions.
+
+1. Si la clé $_SESSION['auth'] existe il y a bien un utilisateur connecté, on lui laissera accèder à toutes les pages, sinon il faut lui envoyer une exception.
+
+    Pour séparer cette exception des autres, on va créer un autre dossier **Security** où on va créer un fichier pour cette exception **ForbiddenException**.
+
+    ```
+    <?php
+    namespace App\Security;
+
+    use Exception;
+
+    class ForbiddenException extends Exception {
+
+    }
+    ```
+
+2. Dans la classe Auth.
+
+    ```
+    <?php
+    namespace App;
+
+    use App\Security\ForbiddenException;
+    use Exception;
+
+    class Auth {
+        /**
+         * Vérifie si l'utilisateur est bien connecté
+         */
+        public static function check() {
+            if (!isset($_SESSION['auth'])) {
+                throw new ForbiddenException();
+            }
+        }
+    }
+    ```
+
+    - On teste et on tombe bien sur le ForbiddenException.
+
+3. C'est au moment où on a vérifié que l'utilisateur est bien en bdd, qu'on peut initialiser sa session.
+
+    On sauvegarde son id dans la clé 'auth'.
+
+    ```
+    if (password_verify($_POST['password'], $userLogin->getPassword()) === true) {
+        
+        session_start();
+       
+        $_SESSION['auth'] = $userLogin->getId();
+
+        header('Location: ' . $router->url('admin_posts'));
+        exit();
+    };
+    ```
+
+4. On avait pas prévu de sauvegarder l'id de l'utilisateur, on va donc rajouter cette propriété dans le model User.
+
+5. Si on teste on tombe toujours sur le Forbidden, cela est dû au fait que dès fois la session ne se démarre pas, alors il faut vérifier si on a bien une session d'activée. On va utiliser la fonction **session_status**.
+
+    ```
+    public static function check() {
+        // Vérifie si la session est activée
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+        if (!isset($_SESSION['auth'])) {
+            throw new ForbiddenException();
+        }
+    }
+    ```
+
+6. On re teste et ça marche, maintenant une personne déconnectée n'aura pas accès à cette page.
+
+7. Pour tester vraiment si ça marche, dans l'inspecteur, on va dans l'onglet Applications, on supprime la ligne qui contient la session, on reactualise la page et on retombe sur le Forbidden.
+
+
+
+
+
 
 
 

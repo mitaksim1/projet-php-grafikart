@@ -1,6 +1,7 @@
 <?php
 namespace App;
 
+use App\Security\ForbiddenException;
 use Exception;
 
 class Auth {
@@ -8,7 +9,12 @@ class Auth {
      * Vérifie si l'utilisateur est bien connecté
      */
     public static function check() {
-    
-        // TODO : Ecrire le code
+        // Vérifie si la session est activée
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+        if (!isset($_SESSION['auth'])) {
+            throw new ForbiddenException();
+        }
     }
 }

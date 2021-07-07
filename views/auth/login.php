@@ -29,6 +29,10 @@ if (!empty($_POST)) {
             $_POST['password'];
             // Vérification si les mots de passe correspondent
             if (password_verify($_POST['password'], $userLogin->getPassword()) === true) {
+                // Start la session
+                session_start();
+                // Sauvegarde l'id de l'utilisateur dans la clé 'auth'
+                $_SESSION['auth'] = $userLogin->getId();
                 header('Location: ' . $router->url('admin_posts'));
                 exit();
             };
